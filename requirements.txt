@@ -1,0 +1,9 @@
+flask
+sqlalchemy
+pymsql
+flask-sqlalchemy
+flask-migrate
+flask-script
+
+py-bcrypt
+flask-restplus
