@@ -6,9 +6,9 @@ DEBUG = True
 # ustawienia polaczenia z baza danych
 
 DB_USERNAME = 'root'
-DB_PASSWORD = ''
+DB_PASSWORD = 'root'
 DB_NAME = 'bd2_project'
 DB_HOST = os.getenv('IP', '127.0.0.1')
-DB_URI = "mysql+pymsql://%s:%s@%s/%s" % (DB_USERNAME, DB_PASSWORD, DB_HOST, DB_NAME)
+DB_URI = "mysql+pymysql://%s:%s@%s/%s" % (DB_USERNAME, DB_PASSWORD, DB_HOST, DB_NAME)
 SQLALCHEMY_DATABASE_URI = DB_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = True
