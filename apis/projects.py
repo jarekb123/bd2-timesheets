@@ -3,6 +3,8 @@ from flask_restplus import Resource, Namespace
 from database.models import Project as ProjectModel
 from database.schemas import ProjectSchema
 
+from apis.decorators import on_map_error
+
 projects_api = Namespace('projects', description="Projects related operations")
 
 
@@ -15,6 +17,7 @@ class AllProjects(Resource):
         all_projects = ProjectModel.query.all()
         return self.projects_schema.jsonify(all_projects)
 
+    @on_map_error("Bad JSON request")
     def post(self):
         new_project = self.project_schema.load(api.payload)
         db.session.add(new_project.data)
@@ -32,3 +35,6 @@ class Project(Resource):
             return self.project_schema.jsonify(project)
         else:
             return {'error': 'No such project'}, 404
+    # def put(self, id):
+    #     project = ProjectModel.query.filter_by(id=id).first()
+    #     updated_project = self.project_schema.load(api.payload)
