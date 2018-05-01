@@ -1,152 +1,146 @@
-# coding: utf-8
 from my_app import db
 
-
-class DniPracownik(db.Model):
-    __tablename__ = 'Dni_Pracownik'
-
-    Typ_wolne_id = db.Column(db.ForeignKey('Typ_wolne.id'), primary_key=True, nullable=False, index=True)
-    Pracownik_id = db.Column(db.ForeignKey('Pracownik.id'), primary_key=True, nullable=False, index=True)
-    Data_dnia_wolnego = db.Column('Data dnia wolnego', db.Date, nullable=False)
-    Ilosc_godzin = db.Column(db.Integer, nullable=False)
-
-    Pracownik = db.relationship('Pracownik')
-    Typ_wolne = db.relationship('TypWolne')
-
-
-class Etap(db.Model):
-    __tablename__ = 'Etap'
+class Employee(db.Model):
+    __tablename__ = 'Employee'
 
     id = db.Column(db.Integer, primary_key=True)
-    Nazwa_etapu = db.Column(db.String(45), nullable=False)
+    first_name = db.Column(db.String(45), nullable=False)
+    last_name = db.Column(db.String(45), nullable=False)
+    job_position = db.Column(db.String(45), nullable=False)
+    contract_finish_date = db.Column(db.Date)
+
+    tasks = db.relationship('Task', secondary='Employee_task')
 
 
-class LogPracy(db.Model):
-    __tablename__ = 'Log_Pracy'
+class EmployeeFreetime(db.Model):
+    __tablename__ = 'Employee_freetime'
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    Pracownik_id = db.Column(db.ForeignKey('Pracownik.id'), primary_key=True, nullable=False, index=True)
-    Zadanie_id = db.Column(db.ForeignKey('Zadanie.id'), nullable=False, index=True)
-    Opis = db.Column(db.Text, nullable=False)
-    Czas_pracy = db.Column(db.DateTime, nullable=False,
-                           server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
-    Ilosc_godzin = db.Column(db.Integer, nullable=False)
+    freetime_type_id = db.Column(db.ForeignKey('Freetime_type.id'), primary_key=True, nullable=False, index=True)
+    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
+    freetime_date = db.Column(db.Date, nullable=False)
+    free_hours_sum = db.Column(db.Integer, nullable=False)
 
-    Pracownik = db.relationship('Pracownik')
-    Zadanie = db.relationship('Zadanie')
+    employee = db.relationship('Employee')
+    freetime_type = db.relationship('FreetimeType')
 
 
-class Podsumowanie(db.Model):
-    __tablename__ = 'Podsumowanie'
+class EmployeeReport(db.Model):
+    __tablename__ = 'Employee_report'
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    Pracownik_id = db.Column(db.ForeignKey('Pracownik.id'), primary_key=True, nullable=False, index=True)
-    Miesi_c = db.Column('Miesi?c', db.Integer, nullable=False)
-    Rok = db.Column(db.Integer, nullable=False)
-    Wynagrodzenie = db.Column(db.Float(asdecimal=True), nullable=False)
+    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False)
+    hours_sum = db.Column(db.Integer, nullable=False)
+    report_sprint_id = db.Column(db.ForeignKey('Report.sprint_id'), primary_key=True, nullable=False, index=True)
 
-    Pracownik = db.relationship('Pracownik')
-
-
-class Pracownik(db.Model):
-    __tablename__ = 'Pracownik'
-
-    id = db.Column(db.Integer, primary_key=True)
-    Imi_ = db.Column('Imi?', db.String(45), nullable=False)
-    Nazwisko = db.Column(db.String(45), nullable=False)
-    Stanowisko = db.Column(db.String(45), nullable=False)
-    Data_ko_ca_umowy = db.Column('Data ko?ca umowy', db.DateTime)
-
-    Zadanies = db.relationship('Zadanie', secondary='Wykonawcy_zadania')
+    employee = db.relationship('Employee')
+    report_sprint = db.relationship('Report')
 
 
-class PracownikRaport(db.Model):
-    __tablename__ = 'Pracownik_Raport'
-
-    Pracownik_id = db.Column(db.ForeignKey('Pracownik.id'), primary_key=True, nullable=False)
-    Raport_id = db.Column(db.ForeignKey('Raport.id'), primary_key=True, nullable=False, index=True)
-    Liczba_godzin = db.Column('Liczba godzin', db.Integer, nullable=False)
-
-    Pracownik = db.relationship('Pracownik')
-    Raport = db.relationship('Raport')
-
-
-class Projekt(db.Model):
-    __tablename__ = 'Projekt'
+class EmployeeRole(db.Model):
+    __tablename__ = 'Employee_role'
 
     id = db.Column(db.Integer, primary_key=True)
-    Opis = db.Column(db.Text, nullable=False)
-    Bud_et = db.Column('Bud?et', db.Float(asdecimal=True), nullable=False)
-    Data_rozpocz_cia = db.Column('Data rozpocz?cia', db.DateTime, nullable=False)
-    Data_zako_czenia = db.Column('Data zako?czenia', db.DateTime)
+    name = db.Column(db.String(45), nullable=False)
 
 
-class Raport(db.Model):
-    __tablename__ = 'Raport'
-
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    Sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, nullable=False, index=True)
-    Czas_wygenerowania = db.Column('Czas wygenerowania', db.DateTime, nullable=False,
-                                   server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
-    Opis = db.Column(db.Text, nullable=False)
-
-    Sprint = db.relationship('Sprint')
+t_Employee_task = db.Table(
+    'Employee_task', db.metadata,
+    db.Column('employee_', db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True),
+    db.Column('task_id', db.ForeignKey('Task.id'), primary_key=True, nullable=False, index=True)
+)
 
 
-class RolaPracownikProjekt(db.Model):
-    __tablename__ = 'Rola_pracownik_projekt'
-
-    Stawka = db.Column(db.Float(asdecimal=True), nullable=False)
-    Pracownik_id = db.Column(db.ForeignKey('Pracownik.id'), primary_key=True, nullable=False, index=True)
-    Projekt_id = db.Column(db.ForeignKey('Projekt.id'), primary_key=True, nullable=False, index=True)
-    Rola_pracownika_id = db.Column(db.ForeignKey('Rola_pracownika.id'), nullable=False, index=True)
-
-    Pracownik = db.relationship('Pracownik')
-    Projekt = db.relationship('Projekt')
-    Rola_pracownika = db.relationship('RolaPracownika')
-
-
-class RolaPracownika(db.Model):
-    __tablename__ = 'Rola_pracownika'
+class FreetimeType(db.Model):
+    __tablename__ = 'Freetime_type'
 
     id = db.Column(db.Integer, primary_key=True)
-    Nazwa_roli = db.Column(db.String(45), nullable=False)
+    Nazwa_typu = db.Column('Nazwa typu', db.String(45), nullable=False)
+
+
+class Project(db.Model):
+    __tablename__ = 'Project'
+
+    id = db.Column(db.Integer, primary_key=True)
+    descrption = db.Column(db.Text, nullable=False)
+    budget = db.Column(db.Float(asdecimal=True), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    finish_time = db.Column(db.DateTime)
+
+
+class ProjectEmployeeRole(db.Model):
+    __tablename__ = 'Project_employee_role'
+
+    rate = db.Column(db.Float(asdecimal=True), nullable=False)
+    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
+    project_id = db.Column(db.ForeignKey('Project.id'), primary_key=True, nullable=False, index=True)
+    employee_role_id = db.Column(db.ForeignKey('Employee_role.id'), nullable=False, index=True)
+
+    employee = db.relationship('Employee')
+    employee_role = db.relationship('EmployeeRole')
+    project = db.relationship('Project')
 
 
 class Sprint(db.Model):
     __tablename__ = 'Sprint'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    Projekt_id = db.Column(db.ForeignKey('Projekt.id'), primary_key=True, nullable=False, index=True)
-    Data_rozpocz_cia = db.Column('Data rozpocz?cia', db.DateTime, nullable=False)
-    Data_zako_czenia = db.Column('Data zako?czenia', db.DateTime)
+    project_id = db.Column(db.ForeignKey('Project.id'), primary_key=True, nullable=False, index=True)
+    start_time = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    finish_time = db.Column(db.DateTime)
 
-    Projekt = db.relationship('Projekt')
+    project = db.relationship('Project')
 
 
-class TypWolne(db.Model):
-    __tablename__ = 'Typ_wolne'
+class Report(Sprint):
+    __tablename__ = 'Report'
+
+    sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, index=True)
+    generation_time = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    descrption = db.Column(db.Text, nullable=False)
+
+
+class Stage(db.Model):
+    __tablename__ = 'Stage'
 
     id = db.Column(db.Integer, primary_key=True)
-    Nazwa_typu = db.Column('Nazwa typu', db.String(45), nullable=False)
+    name = db.Column(db.String(45), nullable=False)
 
 
-t_Wykonawcy_zadania = db.Table(
-    'Wykonawcy_zadania', db.metadata,
-    db.Column('Pracownik_id', db.ForeignKey('Pracownik.id'), primary_key=True, nullable=False, index=True),
-    db.Column('Zadanie_id', db.ForeignKey('Zadanie.id'), primary_key=True, nullable=False, index=True)
-)
-
-
-class Zadanie(db.Model):
-    __tablename__ = 'Zadanie'
+class Summarize(db.Model):
+    __tablename__ = 'Summarize'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    Etap_id = db.Column(db.ForeignKey('Etap.id'), nullable=False, index=True)
-    Pracownik_id = db.Column(db.ForeignKey('Pracownik.id'), primary_key=True, nullable=False, index=True)
-    Sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, nullable=False, index=True)
-    Opis = db.Column(db.Text, nullable=False)
+    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
+    month = db.Column(db.Integer, nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    salary = db.Column(db.Float(asdecimal=True), nullable=False)
 
-    Etap = db.relationship('Etap')
-    Pracownik = db.relationship('Pracownik')
-    Sprint = db.relationship('Sprint')
+    employee = db.relationship('Employee')
+
+
+class Task(db.Model):
+    __tablename__ = 'Task'
+
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    stage_id = db.Column(db.ForeignKey('Stage.id'), nullable=False, index=True)
+    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
+    sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, nullable=False, index=True)
+    descrption = db.Column(db.Text, nullable=False)
+    creation_time = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+
+    employee = db.relationship('Employee')
+    sprint = db.relationship('Sprint')
+    stage = db.relationship('Stage')
+
+
+class Worklog(db.Model):
+    __tablename__ = 'Worklog'
+
+    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
+    task_id = db.Column(db.ForeignKey('Task.id'), primary_key=True, nullable=False, index=True)
+    descrption = db.Column(db.Text, nullable=False)
+    work_date = db.Column(db.Date, nullable=False)
+    logged_hours = db.Column(db.Integer, nullable=False)
+    creation_time = db.Column(db.DateTime, primary_key=True, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+
+    employee = db.relationship('Employee')
+    task = db.relationship('Task')
