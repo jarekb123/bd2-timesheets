@@ -12,4 +12,4 @@ migrate = Migrate(app, db)
 
 api = Api(app)
 
-from test_api import api
+import test_api
