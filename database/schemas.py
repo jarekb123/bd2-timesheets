@@ -1,4 +1,5 @@
 from my_app import ma
+from marshmallow import post_load
 from database import models
 import simplejson
 
