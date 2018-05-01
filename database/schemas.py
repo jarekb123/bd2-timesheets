@@ -5,21 +5,25 @@ import simplejson
 
 class EmployeeSchema(ma.ModelSchema):
     class Meta:
+        json_module = simplejson
         model = models.Employee
 
 
 class EmployeeFreetimeSchema(ma.ModelSchema):
     class Meta:
+        json_module = simplejson
         model = models.EmployeeFreetime
 
 
 class EmployeeReportSchema(ma.ModelSchema):
     class Meta:
+        json_module = simplejson
         model = models.EmployeeReport
 
 
 class EmployeeRoleSchema(ma.ModelSchema):
     class Meta:
+
         model = models.EmployeeRole
 
 
