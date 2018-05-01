@@ -8,10 +8,10 @@ from database.models import *
 class TestApi(Resource):
     def get(self):
         test_array = {"test": "test_val"}
-        #result = db.engine.execute('SELECT * from Etap').fetchone()
-        result = Etap.query.first()
-        etap = Etap(id=4, Nazwa_etapu='PogChamp')
+        # result = db.engine.execute('SELECT * from Etap').fetchone()
+        result = Stage.query.first()
+        etap = Stage(name='PogChamp')
         db.session.add(etap)
         db.session.commit()
         print(type(result))
-        return jsonify(result.Nazwa_etapu)
+        return jsonify(result.name)

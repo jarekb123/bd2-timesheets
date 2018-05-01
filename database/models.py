@@ -1,5 +1,6 @@
 from my_app import db
 
+
 class Employee(db.Model):
     __tablename__ = 'Employee'
 
@@ -44,7 +45,7 @@ class EmployeeRole(db.Model):
 
 t_Employee_task = db.Table(
     'Employee_task', db.metadata,
-    db.Column('employee_', db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True),
+    db.Column('employee_id', db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True),
     db.Column('task_id', db.ForeignKey('Task.id'), primary_key=True, nullable=False, index=True)
 )
 
@@ -53,16 +54,17 @@ class FreetimeType(db.Model):
     __tablename__ = 'Freetime_type'
 
     id = db.Column(db.Integer, primary_key=True)
-    Nazwa_typu = db.Column('Nazwa typu', db.String(45), nullable=False)
+    name = db.Column(db.String(45), nullable=False)
 
 
 class Project(db.Model):
     __tablename__ = 'Project'
 
     id = db.Column(db.Integer, primary_key=True)
-    descrption = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False)
     budget = db.Column(db.Float(asdecimal=True), nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    start_time = db.Column(db.DateTime, nullable=False,
+                           server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     finish_time = db.Column(db.DateTime)
 
 
@@ -84,7 +86,8 @@ class Sprint(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     project_id = db.Column(db.ForeignKey('Project.id'), primary_key=True, nullable=False, index=True)
-    start_time = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    start_time = db.Column(db.DateTime, nullable=False,
+                           server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     finish_time = db.Column(db.DateTime)
 
     project = db.relationship('Project')
@@ -94,8 +97,9 @@ class Report(Sprint):
     __tablename__ = 'Report'
 
     sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, index=True)
-    generation_time = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
-    descrption = db.Column(db.Text, nullable=False)
+    generation_time = db.Column(db.DateTime, nullable=False,
+                                server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    description = db.Column(db.Text, nullable=False)
 
 
 class Stage(db.Model):
@@ -124,8 +128,9 @@ class Task(db.Model):
     stage_id = db.Column(db.ForeignKey('Stage.id'), nullable=False, index=True)
     employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
     sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, nullable=False, index=True)
-    descrption = db.Column(db.Text, nullable=False)
-    creation_time = db.Column(db.DateTime, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    description = db.Column(db.Text, nullable=False)
+    creation_time = db.Column(db.DateTime, nullable=False,
+                              server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
 
     employee = db.relationship('Employee')
     sprint = db.relationship('Sprint')
@@ -137,10 +142,11 @@ class Worklog(db.Model):
 
     employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
     task_id = db.Column(db.ForeignKey('Task.id'), primary_key=True, nullable=False, index=True)
-    descrption = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False)
     work_date = db.Column(db.Date, nullable=False)
     logged_hours = db.Column(db.Integer, nullable=False)
-    creation_time = db.Column(db.DateTime, primary_key=True, nullable=False, server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    creation_time = db.Column(db.DateTime, primary_key=True, nullable=False,
+                              server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
 
     employee = db.relationship('Employee')
     task = db.relationship('Task')
