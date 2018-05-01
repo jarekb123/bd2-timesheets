@@ -1,7 +1,7 @@
 from sqlalchemy.orm.exc import UnmappedError
 
 
-def on_map_error(error_msg):
+def handle_map_error(error_msg):
     def jsonify_error_decorator(func):
         def wrapper(*args, **kwargs):
             try:
@@ -11,5 +11,3 @@ def on_map_error(error_msg):
                 return {'error': error_msg}, 401
         return wrapper
     return jsonify_error_decorator
-
-

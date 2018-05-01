@@ -3,12 +3,12 @@ from flask_restplus import Resource, Namespace
 from database.models import Project as ProjectModel
 from database.schemas import ProjectSchema
 
-from apis.decorators import on_map_error
+from apis.decorators import handle_map_error
 
 projects_api = Namespace('projects', description="Projects related operations")
 
 
-@api.route('/projects')
+@api.route('/projects/')
 class AllProjects(Resource):
     projects_schema = ProjectSchema(many=True)
     project_schema = ProjectSchema()
@@ -17,7 +17,7 @@ class AllProjects(Resource):
         all_projects = ProjectModel.query.all()
         return self.projects_schema.jsonify(all_projects)
 
-    @on_map_error("Bad JSON request")
+    @handle_map_error("Bad JSON request")
     def post(self):
         new_project = self.project_schema.load(api.payload)
         db.session.add(new_project.data)
@@ -30,11 +30,23 @@ class Project(Resource):
     project_schema = ProjectSchema()
 
     def get(self, id):
-        project = ProjectModel.query.filter_by(id=id).first()
-        if project:
-            return self.project_schema.jsonify(project)
-        else:
+        project = ProjectModel.query.get(id)
+        if project is None:
             return {'error': 'No such project'}, 404
-    # def put(self, id):
-    #     project = ProjectModel.query.filter_by(id=id).first()
-    #     updated_project = self.project_schema.load(api.payload)
+        else:
+            return self.project_schema.jsonify(project)
+
+    @handle_map_error("Bad JSON request")
+    def put(self, id):
+        project = ProjectModel.query.get(id)
+        if project is None:
+            return {'error': 'No such project'}, 404
+        updated_project = self.project_schema.load(api.payload, instance=project).data
+        db.session.add(updated_project)
+        db.session.commit()
+        return {'result': 'Project {} updated'.format(id)}
+
+    def delete(self, id):
+        ProjectModel.query.filter_by(id=id).delete()
+        db.session.commit()
+        return {'result': 'Project {} deleted'.format(id)}
