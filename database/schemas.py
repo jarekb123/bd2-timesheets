@@ -1,5 +1,6 @@
 from my_app import ma
 from database import models
+import simplejson
 
 
 class EmployeeSchema(ma.ModelSchema):
@@ -29,6 +30,7 @@ class FreetimeTypeSchema(ma.ModelSchema):
 
 class ProjectSchema(ma.ModelSchema):
     class Meta:
+        json_module = simplejson
         model = models.Project
 
 
