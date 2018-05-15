@@ -1,5 +1,6 @@
 from my_app import ma
-from marshmallow import post_load
+from marshmallow import fields
+from marshmallow_sqlalchemy import field_for
 from database import models
 import simplejson
 
@@ -42,6 +43,9 @@ class ProjectSchema(ma.ModelSchema):
 class ProjectEmployeeRoleSchema(ma.ModelSchema):
     class Meta:
         model = models.ProjectEmployeeRole
+    employee = fields.Nested(EmployeeSchema, only=('first_name', 'last_name'))
+    employee_role = fields.Nested(EmployeeRoleSchema, only=['name'])
+    # project_id = fields.Int()
 
 
 class SprintSchema(ma.ModelSchema):

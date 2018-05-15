@@ -10,7 +10,7 @@ class Employee(db.Model):
     job_position = db.Column(db.String(45), nullable=False)
     contract_finish_date = db.Column(db.Date)
 
-    tasks = db.relationship('Task', secondary='Employee_task')
+    # tasks = db.relationship('Task', secondary='Employee_task')
 
 
 class EmployeeFreetime(db.Model):
@@ -61,6 +61,7 @@ class Project(db.Model):
     __tablename__ = 'Project'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
     description = db.Column(db.Text, nullable=False)
     budget = db.Column(db.Float(asdecimal=True), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False,

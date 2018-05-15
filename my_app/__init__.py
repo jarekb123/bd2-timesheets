@@ -16,5 +16,11 @@ api = Api(app)
 
 ma = Marshmallow(app)
 
-from apis.projects import projects_api
+from apis import error_handlers
+
+
+from apis.projects.views import projects_api
 api.add_namespace(projects_api)
+
+from apis.employee.views import employee_api
+api.add_namespace(employee_api)
