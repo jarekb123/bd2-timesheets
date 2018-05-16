@@ -127,7 +127,6 @@ class Task(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     stage_id = db.Column(db.ForeignKey('Stage.id'), nullable=False, index=True)
-    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
     sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, nullable=False, index=True)
     description = db.Column(db.Text, nullable=False)
     creation_time = db.Column(db.DateTime, nullable=False,
