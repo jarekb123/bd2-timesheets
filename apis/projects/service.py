@@ -2,7 +2,6 @@ from my_app import db
 from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole, ProjectEmployeeRoleSchema
 
 
-
 def get_all_projects():
     """
     Get all projects
@@ -41,16 +40,19 @@ def update_project(project_json, id):
     return ProjectSchema.jsonify(project)
 
 
-def delete_project(id):
+def delete_project(project_id):
     """
     Deletes a project
 
-    :param id: An ID of a project
+    :param project_id: An ID of a project
     :return: Operation status message
     """
-    Project.query.filter_by(id=id).delete()
-    db.session.commit()
-    return {'status': 'Project {} deleted correctly'.format(id)}, 200
+    rows_deleted = Project.query.filter_by(id=project_id).delete()
+    if rows_deleted:
+        db.session.commit()
+        return {'status': f'Project {project_id} deleted correctly'}, 200
+    else:
+        return {'error': f'Project {project_id} not exists'}, 404
 
 
 def add_employee_to_project(project_id, employee_role):
