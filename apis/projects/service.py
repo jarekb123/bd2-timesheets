@@ -1,5 +1,5 @@
 from my_app import db
-from apis.projects.schemas import Project, ProjectSchema
+from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole
 
 
 def get_all_projects():
@@ -50,3 +50,15 @@ def delete_project(id):
     Project.query.filter_by(id=id).delete()
     db.session.commit()
     return {'status': 'Project {} deleted correctly'.format(id)}, 200
+
+
+def add_employee_to_project(employee_project):
+    """
+    Adds employee's role to particular project
+
+    :param employee_project: ProjectEmployeeRole data object
+    :return Added employee's role data object
+    """
+    db.session.add(employee_project)
+    db.session.commit()
+    return employee_project

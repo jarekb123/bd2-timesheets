@@ -80,4 +80,11 @@ class Employees(Resource):
     @api.expect(employee_project_relation_model)
     def post(self, id):
         """ Post new employee-project relation """
-            
+        employee_project = ProjectEmployeeRoleSchema.load(api.payload)
+        return add_employee_to_project(employee_project)
+
+    @api.expect(employee_project_relation_model)
+    def put(self, id):
+        """ Updates employee role in project """
+        employee_project = ProjectEmployeeRoleSchema.load(api.payload)
+        return add_employee_to_project(employee_project)
