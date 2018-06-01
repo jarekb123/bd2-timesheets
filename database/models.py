@@ -61,7 +61,7 @@ class Project(db.Model):
     __tablename__ = 'Project'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String(45), nullable=False)
     description = db.Column(db.Text, nullable=False)
     budget = db.Column(db.Float(asdecimal=True), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False,
