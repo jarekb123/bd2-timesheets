@@ -81,6 +81,12 @@ class ProjectEmployeeRole(db.Model):
     employee_role = db.relationship('EmployeeRole', lazy=True)
     project = db.relationship('Project', lazy=True)
 
+    def __init__(self, project_id, employee_id, employee_role_id, rate):
+        self.project_id = project_id
+        self.employee_id = employee_id
+        self.employee_role_id = employee_role_id
+        self.rate = rate
+
 
 class Sprint(db.Model):
     __tablename__ = 'Sprint'

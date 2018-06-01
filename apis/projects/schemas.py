@@ -15,5 +15,5 @@ class ProjectSchema(ma.ModelSchema):
 class ProjectEmployeeRoleSchema(ma.ModelSchema):
     class Meta:
         model = ProjectEmployeeRole
-    employee = fields.Nested(EmployeeSchema, only=('id', 'first_name', 'last_name'))
-    employee_role = fields.Nested(EmployeeRoleSchema, only=['name'])
+    employee = fields.Nested(EmployeeSchema, only=('id', 'first_name', 'last_name'), dump_only=True)
+    employee_role = fields.Nested(EmployeeRoleSchema, dump_only=True)

@@ -30,7 +30,7 @@ class AllProjects(Resource):
         new_project = ProjectSchema.load(api.payload).data
         new_project = add_project(new_project)
         if new_project.id:
-            return ProjectSchema.jsonify(new_project)
+            return ProjectSchema().jsonify(new_project)
         else:
             return {'error': 'Project is not added'}, 503
 
@@ -61,30 +61,31 @@ class Project(Resource):
 
 employee_project_relation_model = api.model('Project-Employee Relation', {
     'employee_id': fields.Integer(),
-    'role_id': fields.Integer(),
+    'employee_role_id': fields.Integer(),
     'rate': fields.Float()
 
 })
 
 
-@projects_api.route('/<int:id>/employees')
+@projects_api.route('/<int:project_id>/employees')
 class Employees(Resource):
     """ Employees related to particular project """
 
-    def get(self, id):
+    def get(self, project_id):
         """ Returns employees related to project """
-        employees = ProjectEmployeeRole.query.filter_by(project_id=id).all()
+        employees = ProjectEmployeeRole.query.filter_by(project_id=project_id).all()
         return ProjectEmployeeRoleSchema(many=True).jsonify(employees)
 
     @api.expect(employee_project_relation_model)
-    def post(self, id):
+    def post(self, project_id):
         """ Post new employee-project relation """
-        employee_project = ProjectEmployeeRoleSchema.load(api.payload)
-        return add_employee_to_project(employee_project)
+        result = add_employee_to_project(project_id, api.payload)
+        if result:
+            return ProjectEmployeeRoleSchema().jsonify(result)
+        return {'error': 'Employee is not added to project'}, 503
 
     @api.expect(employee_project_relation_model)
-    def put(self, id):
+    def put(self, project_id):
         """ Updates employee role in project """
-        employee_project = ProjectEmployeeRoleSchema.load(api.payload)
-        return add_employee_to_project(employee_project)
+        return add_employee_to_project(project_id, api.payload)
 
