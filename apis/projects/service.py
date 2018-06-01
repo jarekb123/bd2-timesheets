@@ -71,7 +71,23 @@ def add_employee_to_project(project_id, employee_role):
     )
     db.session.add(employee_role)
     db.session.commit()
+
     return ProjectEmployeeRole.query.filter_by(
         project_id=employee_role.project_id,
         employee_id=employee_role.employee_id)\
         .first()
+
+def delete_employee(project_id, employee_id):
+    """ Deletes employee from project
+
+    :param project_id: An ID of a project
+    :param employee_id: An ID of an employee
+    :return: Operation status message
+    """
+    rowsDeleted = ProjectEmployeeRole.query.filter_by(employee_id=employee_id, project_id=project_id).delete()
+    if not rowsDeleted:
+        return {'status': 'Employee: {} not found in Project: {}'.format(employee_id, project_id)}, 404
+
+    db.session.commit()
+    return {'status': 'Employee: {} deleted correctly from Project: {}'.format(employee_id, project_id)}, 200
+

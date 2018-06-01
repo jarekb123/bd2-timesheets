@@ -27,7 +27,8 @@ class AllProjects(Resource):
     @api.expect(project_model, validate=True)
     def post(self):
         """ Post new project """
-        new_project = ProjectSchema.load(api.payload).data
+        print(api.payload)
+        new_project = ProjectSchema().load(data=api.payload).data
         new_project = add_project(new_project)
         if new_project.id:
             return ProjectSchema().jsonify(new_project)
@@ -35,26 +36,26 @@ class AllProjects(Resource):
             return {'error': 'Project is not added'}, 503
 
 
-@projects_api.route('/<int:id>')
+@projects_api.route('/<int:project_id>')
 class Project(Resource):
     project_schema = ProjectSchema()
 
-    def get(self, id):
+    def get(self, project_id):
         """ 
         Returns a project 
         """
-        project = ProjectModel.query.get(id)
+        project = ProjectModel.query.get(project_id)
         if project is None:
             return {'error': 'No such project'}, 404
         else:
             return self.project_schema.jsonify(project)
 
     @handle_map_error("Bad JSON request")
-    def put(self, id):
+    def put(self, project_id):
         """ Updates a project """
-        return update_project(api.payload, id)
+        return update_project(api.payload, project_id)
 
-    def delete(self, id):
+    def delete(self, project_id):
         """ Deletes a project """
         return delete_project(id)
 
@@ -89,3 +90,11 @@ class Employees(Resource):
         """ Updates employee role in project """
         return add_employee_to_project(project_id, api.payload)
 
+
+@projects_api.route('/<int:project_id>/employees/<int:employee_id>')
+class Employees(Resource):
+    """Employee deleting"""
+
+    def delete(self, project_id, employee_id):
+        """Deletes employee from project"""
+        return delete_employee(project_id, employee_id)
