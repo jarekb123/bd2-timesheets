@@ -77,9 +77,9 @@ class ProjectEmployeeRole(db.Model):
     project_id = db.Column(db.ForeignKey('Project.id'), primary_key=True, nullable=False, index=True)
     employee_role_id = db.Column(db.ForeignKey('Employee_role.id'), nullable=False, index=True)
 
-    employee = db.relationship('Employee')
-    employee_role = db.relationship('EmployeeRole')
-    project = db.relationship('Project')
+    employee = db.relationship('Employee', lazy=True)
+    employee_role = db.relationship('EmployeeRole', lazy=True)
+    project = db.relationship('Project', lazy=True)
 
 
 class Sprint(db.Model):

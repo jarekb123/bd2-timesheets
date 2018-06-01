@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_restplus import Api
 from flask_marshmallow import Marshmallow
+import logging
 
 
 app = Flask(__name__)
@@ -15,6 +16,9 @@ migrate = Migrate(app, db)
 api = Api(app)
 
 ma = Marshmallow(app)
+
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 from apis import error_handlers
 

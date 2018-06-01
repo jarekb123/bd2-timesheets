@@ -1,10 +1,9 @@
 from my_app import api, db, ma
 from flask_restplus import Resource, Namespace, Model, fields
 from database.models import Project as ProjectModel, Employee, ProjectEmployeeRole
-from database.schemas import  ProjectEmployeeRoleSchema
 from marshmallow_sqlalchemy import field_for
 from apis.projects.service import *
-from apis.projects.schemas import ProjectSchema
+from apis.projects.schemas import ProjectSchema, ProjectEmployeeRoleSchema
 
 from apis.decorators import handle_map_error
 
@@ -88,3 +87,4 @@ class Employees(Resource):
         """ Updates employee role in project """
         employee_project = ProjectEmployeeRoleSchema.load(api.payload)
         return add_employee_to_project(employee_project)
+
