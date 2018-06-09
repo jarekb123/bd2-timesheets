@@ -1,7 +1,8 @@
 from my_app import db
 from database.models import Worklog
 from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole, ProjectEmployeeRoleSchema, Sprint, \
-    SprintSchema, Task, Worklog, Employee, TaskSchema
+SprintSchema, Task, Worklog, Employee, TaskSchema
+from database.models import Report
 from sqlalchemy import func
 from flask import jsonify
 
@@ -123,19 +124,29 @@ def add_sprint(project_id, sprint_data):
     return SprintSchema().jsonify(sprintObj)
 
 
-def get_sprint_report(sprint_id):
+def get_sprint_report(project_id, sprint_id):
     """Get report for sprint
     :param sprint_id: A ID of sprint
     :return Sprint report"""
 
     result = Task.query.with_entities(Employee.first_name, Employee.last_name, func.sum(Worklog.logged_hours)).filter(
         Task.sprint_id == sprint_id,
+        ProjectEmployeeRole.project_id == project_id, ProjectEmployeeRole.employee_id == Employee.id,
         Worklog.task_id == Task.id, Employee.id == Worklog.employee_id).group_by(
         Worklog.employee_id).all()
 
     result = [[x, y, str(z)] for x, y, z in result]
-    return jsonify(result)
+    result_json = jsonify(result)
+    result_str = str(result)
+    report = Report(description=result_str)
+    db.session.add(report)
+    db.session.commit()
+    return result_json
 
+
+def get_sprint(project_id, sprint_id):
+    sprint = Sprint.query.filter(Sprint.id == sprint_id, Sprint.project_id == project_id).first()
+    return SprintSchema().jsonify(sprint)
 
 def create_task(sprint_id, task_data):
     """Add new task to project if there isnt one already

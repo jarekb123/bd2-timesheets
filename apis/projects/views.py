@@ -107,7 +107,7 @@ sprint_model = api.model('SprintApi', {
 
 
 @projects_api.route('/<int:project_id>/sprints')
-class SprintRoute(Resource):
+class SprintsRoute(Resource):
     """Operations related to project sprints"""
 
     def get(self, project_id):
@@ -123,13 +123,23 @@ class SprintRoute(Resource):
         return result
 
 
+@projects_api.route('/<int:project_id>/sprints/<int:sprint_id>')
+class SprintsRoute(Resource):
+    """Operations related to project sprints"""
+
+    def get(self, project_id, sprint_id):
+        """Shows project sprint"""
+        sprint = get_sprint(project_id, sprint_id)
+        return sprint
+
+
 @projects_api.route('/<int:project_id>/sprints/<int:sprint_id>/report')
 class SprintReport(Resource):
     """Operations related to report generation for sprint"""
 
     def get(self, project_id, sprint_id):
         """Shows sprint report"""
-        result = get_sprint_report(sprint_id)
+        result = get_sprint_report(project_id, sprint_id)
         return result
 
 
