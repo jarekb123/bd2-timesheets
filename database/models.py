@@ -1,5 +1,6 @@
 from my_app import db
 
+from sqlalchemy import func
 
 class Employee(db.Model):
     __tablename__ = 'Employee'
@@ -161,11 +162,8 @@ class Worklog(db.Model):
     description = db.Column(db.Text, nullable=False)
     work_date = db.Column(db.Date, nullable=False)
     logged_hours = db.Column(db.Integer, nullable=False)
-    creation_time = db.Column(db.DateTime, primary_key=True, nullable=False,
-                              server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
-
-    employee = db.relationship('Employee')
-    task = db.relationship('Task')
+    creation_time = db.Column(db.DateTime, primary_key=True,
+                              default=func.now())
 
     def __repr__(self):
         return '<Worklog %r, %r, %r>' % (self.employee_id, self.task_id,  self.work_date)

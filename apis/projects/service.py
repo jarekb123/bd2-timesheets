@@ -1,5 +1,6 @@
 from my_app import db
 from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole, ProjectEmployeeRoleSchema
+from database.models import Worklog
 
 
 def get_all_projects():
@@ -34,7 +35,7 @@ def update_project(project_json, id):
     project = Project.query.get(id)
     if project is None:
         return {'error': 'No such project'}, 404
-    project = ProjectSchema.load(project, instance=project).data
+    project = ProjectSchema.load(project_json, instance=project).data
     db.session.add(project)
     db.session.commit()
     return ProjectSchema.jsonify(project)
@@ -77,6 +78,7 @@ def add_employee_to_project(project_id, employee_role):
         employee_id=employee_role.employee_id)\
         .first()
 
+
 def delete_employee(project_id, employee_id):
     """ Deletes employee from project
 
@@ -90,4 +92,3 @@ def delete_employee(project_id, employee_id):
 
     db.session.commit()
     return {'status': 'Employee: {} deleted correctly from Project: {}'.format(employee_id, project_id)}, 200
-

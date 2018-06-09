@@ -28,3 +28,6 @@ api.add_namespace(projects_api)
 
 from apis.employee.views import employee_api
 api.add_namespace(employee_api)
+
+from apis.worklog.views import ns as worklog_api
+api.add_namespace(worklog_api)
