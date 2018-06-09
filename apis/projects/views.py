@@ -157,3 +157,7 @@ class SprintTask(Resource):
         new_task = api.payload
         result = create_task(sprint_id, new_task)
         return result
+
+    def get(self, sprint_id, project_id):
+        result = get_tasks(sprint_id)
+        return result

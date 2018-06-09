@@ -156,6 +156,15 @@ def create_task(sprint_id, task_data):
     task = TaskSchema().load(data=task_data).data
 
     taskObj = Task(sprint_id=sprint_id, description=task.description, stage_id=task_data['stage_id'])
+
     db.session.add(taskObj)
+    db.session.flush()
     db.session.commit()
-    return SprintSchema().jsonify(taskObj)
+    return TaskSchema().jsonify(taskObj)
+
+
+def get_tasks(sprint_id):
+    tasks = Task.query.filter_by(sprint_id=sprint_id).all()
+    return TaskSchema(many=True).jsonify(tasks)
+
+
