@@ -1,15 +1,16 @@
 from my_app import db
 
+from sqlalchemy import func
+
 
 class Employee(db.Model):
     __tablename__ = 'Employee'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(45), nullable=False)
     last_name = db.Column(db.String(45), nullable=False)
     job_position = db.Column(db.String(45), nullable=False)
     contract_finish_date = db.Column(db.Date)
-
 
 
 class EmployeeFreetime(db.Model):
@@ -44,7 +45,7 @@ class EmployeeReport(db.Model):
 class EmployeeRole(db.Model):
     __tablename__ = 'Employee_role'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(45), nullable=False)
 
 
@@ -58,14 +59,14 @@ t_Employee_task = db.Table(
 class FreetimeType(db.Model):
     __tablename__ = 'Freetime_type'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(45), nullable=False)
 
 
 class Project(db.Model):
     __tablename__ = 'Project'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(45), nullable=False)
     description = db.Column(db.Text, nullable=False)
     budget = db.Column(db.Float(asdecimal=True), nullable=False)
@@ -96,7 +97,7 @@ class ProjectEmployeeRole(db.Model):
 class Sprint(db.Model):
     __tablename__ = 'Sprint'
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     project_id = db.Column(db.ForeignKey('Project.id'), primary_key=True, nullable=False, index=True)
     start_time = db.Column(db.DateTime, nullable=False,
                            server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
@@ -105,10 +106,10 @@ class Sprint(db.Model):
     project = db.relationship('Project')
 
 
-class Report(Sprint):
+class Report(db.Model):
     __tablename__ = 'Report'
 
-    sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, index=True)
+    sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, index=True, autoincrement=True)
     generation_time = db.Column(db.DateTime, nullable=False,
                                 server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     description = db.Column(db.Text, nullable=False)
@@ -117,17 +118,16 @@ class Report(Sprint):
 class Stage(db.Model):
     __tablename__ = 'Stage'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(45), nullable=False)
 
 
 class Summarize(db.Model):
     __tablename__ = 'Summarize'
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
-    month = db.Column(db.Integer, nullable=False)
-    year = db.Column(db.Integer, nullable=False)
+    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False)
+    month = db.Column(db.Integer, primary_key=True, nullable=False)
+    year = db.Column(db.Integer, primary_key=True, nullable=False)
     salary = db.Column(db.Float(asdecimal=True), nullable=False)
 
     employee = db.relationship('Employee')
@@ -142,7 +142,7 @@ class Summarize(db.Model):
 class Task(db.Model):
     __tablename__ = 'Task'
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     stage_id = db.Column(db.ForeignKey('Stage.id'), nullable=False, index=True)
     sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, nullable=False, index=True)
     description = db.Column(db.Text, nullable=False)
@@ -162,11 +162,8 @@ class Worklog(db.Model):
     description = db.Column(db.Text, nullable=False)
     work_date = db.Column(db.Date, nullable=False)
     logged_hours = db.Column(db.Integer, nullable=False)
-    creation_time = db.Column(db.DateTime, primary_key=True, nullable=False,
-                              server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
-
-    employee = db.relationship('Employee')
-    task = db.relationship('Task')
+    creation_time = db.Column(db.DateTime, primary_key=True,
+                              default=func.now())
 
     def __repr__(self):
-        return '<Worklog %r, %r, %r>' % (self.employee_id, self.task_id,  self.work_date)
+        return '<Worklog %r, %r, %r>' % (self.employee_id, self.task_id, self.work_date)

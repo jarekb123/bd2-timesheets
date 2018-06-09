@@ -1,6 +1,6 @@
 from apis.employee.schemas import Employee, EmployeeSchema, SimpleEmployeeSchema, EmployeeFreetimeSchema
-from database.models import EmployeeFreetime, Worklog, ProjectEmployeeRole, Summarize
-from database.schemas import SummarizeSchema
+from database.models import EmployeeFreetime, Worklog, ProjectEmployeeRole, Summarize, Task, t_Employee_task
+from database.schemas import SummarizeSchema, WorklogSchema, TaskSchema
 from my_app import db
 
 from sqlalchemy.exc import DatabaseError
@@ -70,7 +70,8 @@ def add_employee_freetime(employee_id, freetime_json):
 
 
 def generate_employee_summary(employee_id, year, month):
-    worklogs = Worklog.query.filter(Worklog.employee_id == employee_id, func.month(Worklog.work_date) == month,
+    worklogs = Worklog.query.filter(Worklog.employee_id == employee_id,
+                                    func.month(Worklog.work_date) == month,
                                     func.year(Worklog.work_date) == year).all()
 
     salary = decimal.Decimal(0.0)
@@ -84,8 +85,28 @@ def generate_employee_summary(employee_id, year, month):
     try:
         db.session.add(summary)
         db.session.flush()
-        if summary.id:
+        if summary in db.session:
             db.session.commit()
             return SummarizeSchema().jsonify(summary)
     except DatabaseError:
         return {'error': 'Summary did not generate properly'}, 501
+
+
+def get_employee_worklog(employee_id):
+
+    worklogs = Worklog.query.filter_by(employee_id=employee_id).all()
+
+    if worklogs:
+        return WorklogSchema(many=True).jsonify(worklogs)
+    else:
+        return {'error': 'Employee didnt log any work'}, 404
+
+
+def get_employee_tasks(employee_id):
+
+    tasks = Task.query.join(Employee, Task.employee).filter(Employee.id == employee_id).all()
+
+    if tasks:
+        return TaskSchema(many=True).jsonify(tasks)
+    else:
+        return {'error': 'Employee doesnt have any tasks assigned'}, 404

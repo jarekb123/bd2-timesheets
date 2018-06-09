@@ -73,3 +73,4 @@ class TaskSchema(ma.ModelSchema):
 class WorklogSchema(ma.ModelSchema):
     class Meta:
         model = models.Worklog
+        include_fk = True

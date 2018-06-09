@@ -4,6 +4,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from flask_script import Manager, Server
 from my_app import app
 from flask_migrate import MigrateCommand
+from flask_cors import CORS
+CORS(app)
+
 
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)

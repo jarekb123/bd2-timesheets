@@ -64,3 +64,19 @@ class GenerateSummaryApi(Resource):
     def get(self, employee_id, year, month):
         """ Generates and returns monthly summary of the employee"""
         return generate_employee_summary(employee_id, year, month)
+
+
+@employee_api.route('/<int:employee_id>/worklogs')
+class EmployeeWorklogsApi(Resource):
+
+    def get(self, employee_id):
+        """ Get employee's worklogs """
+        return get_employee_worklog(employee_id)
+
+
+@employee_api.route('/<int:employee_id>/tasks')
+class EmployeeTasksApi(Resource):
+
+    def get(self, employee_id):
+        """ Get employee's tasks """
+        return get_employee_tasks(employee_id)
