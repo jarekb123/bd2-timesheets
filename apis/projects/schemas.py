@@ -1,9 +1,14 @@
 from my_app import ma
-from database.models import Project, ProjectEmployeeRole
-from database.schemas import EmployeeSchema, EmployeeRoleSchema
+from database.models import Project, ProjectEmployeeRole, Sprint, Task, Worklog, Employee
+from database.schemas import EmployeeSchema, EmployeeRoleSchema, TaskSchema, WorklogSchema
 
 from marshmallow import fields
 import simplejson
+
+
+class SprintSchema(ma.ModelSchema):
+    class Meta:
+        model = Sprint
 
 
 class ProjectSchema(ma.ModelSchema):
@@ -15,5 +20,6 @@ class ProjectSchema(ma.ModelSchema):
 class ProjectEmployeeRoleSchema(ma.ModelSchema):
     class Meta:
         model = ProjectEmployeeRole
+
     employee = fields.Nested(EmployeeSchema, only=('id', 'first_name', 'last_name'), dump_only=True)
     employee_role = fields.Nested(EmployeeRoleSchema, dump_only=True)

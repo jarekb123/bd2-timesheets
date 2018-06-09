@@ -3,7 +3,7 @@ from flask_restplus import Resource, Namespace, Model, fields
 from database.models import Project as ProjectModel, Employee, ProjectEmployeeRole
 from marshmallow_sqlalchemy import field_for
 from apis.projects.service import *
-from apis.projects.schemas import ProjectSchema, ProjectEmployeeRoleSchema
+from apis.projects.schemas import ProjectSchema, ProjectEmployeeRoleSchema, SprintSchema
 
 from apis.decorators import handle_map_error
 
@@ -98,3 +98,36 @@ class Employees(Resource):
     def delete(self, project_id, employee_id):
         """Deletes employee from project"""
         return delete_employee(project_id, employee_id)
+
+
+sprint_model = api.model('SprintApi', {
+    'start_time': fields.DateTime(required=True),
+    'finish_time': fields.DateTime()
+})
+
+
+@projects_api.route('/<int:project_id>/sprints')
+class SprintRoute(Resource):
+    """Operations related to project sprints"""
+
+    def get(self, project_id):
+        """Shows project sprints"""
+        sprints = get_sprints(project_id)
+        return sprints
+
+    @api.expect(sprint_model, validate=True)
+    def post(self, project_id):
+        """Creates new sprint"""
+        new_sprint = api.payload
+        result = add_sprint(project_id, new_sprint)
+        return result
+
+
+@projects_api.route('/<int:project_id>/sprints/<int:sprint_id>/report')
+class SprintReport(Resource):
+    """Operations related to report generation for sprint"""
+
+    def get(self, project_id, sprint_id):
+        """Shows sprint report"""
+        result = get_sprint_report(sprint_id)
+        return result
