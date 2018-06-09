@@ -139,5 +139,5 @@ class SprintReport(Resource):
 
     def get(self, project_id, sprint_id):
         """Shows sprint report"""
-        result = get_sprint_report(sprint_id)
+        result = get_sprint_report(project_id, sprint_id)
         return result
