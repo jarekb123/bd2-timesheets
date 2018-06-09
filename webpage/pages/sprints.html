@@ -17,7 +17,7 @@
             <div>
                 <label>Wybierz pracownika do dodania:</label>
                 <select class="form-control" ng-model="newProjectEmployee"
-                        ng-options="item as item.label for item in items track by item.id" style="width:200px">
+                        ng-options="item as item.firstname for item in employees track by item.id" style="width:200px">
                 </select>
                 <button type="button" class="btn btn-primary" ng-click="rewritePerson()">Przypisz</button>
             </div>
@@ -35,8 +35,8 @@
         <tbody>
         <tr ng-repeat="sprint in sprints">
             <td>{{ sprint.id }}</td>
-            <td>{{ sprint.startDate }}</td>
-            <td>{{ sprint.endDate }}</td>
+            <td>{{ sprint.start_time | date : format : timezone}}</td>
+            <td>{{ sprint.finish_time| date : format : timezone }}</td>
             <td>
                 <button type="button" class="btn btn-primary" ng-click="sprintViewButton(sprint.id)">Wiecej</button>
                 <button type="button" class="btn btn-primary" ng-click="generateRaport(sprint.id)">Generuj Raport
@@ -50,6 +50,10 @@
     </table>
     <div>
         <div>
-            <button type="button" class="btn btn-primary" ng-click="addSprint()">Dodaj Sprint</button>
+            <label>Data startu</label>
+            <input type="date" class="form-control" placeholder="Data startu" ng-model="startSprintTime" style="width:200px;margin-bottom:4mm"/>
+            <label>Data końca</label>
+            <input type="date" class="form-control" placeholder="Data końca" ng-model="finishSprintTime" style="width:200px;margin-bottom:4mm"/>
+            <button type="button" class="btn btn-primary" ng-click="addSprint(startSprintTime, finishSprintTime)">Dodaj Sprint</button>
         </div>
     </div>

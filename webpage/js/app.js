@@ -59,12 +59,37 @@ angular.module('BdApp', [])
         };
 
         $scope.sprintsButton = function (val) {
-            console.log(val.id);
-            $scope.template = $scope.templates[3];
-            $scope.projectId = val;
-            $scope.project = {};
-            $scope.project = val;
-            activateButton("projects");
+            var req = {
+                method: 'GET',
+                url: 'http://10.78.25.88:5000/projects/'+val.id,
+                headers: {
+                    'Content-Type': 'json/application'
+                }
+            };
+            $scope.projectID=val.id;
+            $http(req).then(function (request) {
+                console.log("success with sprints");
+                console.log(request.data);
+                $scope.project = request.data;
+                var req = {
+                    method: 'GET',
+                    url: 'http://10.78.25.88:5000/projects/'+val.id+"/sprints",
+                    headers: {
+                        'Content-Type': 'json/application'
+                    }
+                };
+                $http(req).then(function (request) {
+                    console.log("success with sprints");
+                    console.log(request.data);
+                    $scope.sprints=request.data;
+                    $scope.template = $scope.templates[3];
+                },function(request){
+                    console.log("failed sprints")
+                });
+                activateButton("projects");
+            }, function () {
+                console.log("failed projects")
+            });
         };
 
         $scope.sprintViewButton = function (val) {
@@ -99,6 +124,7 @@ angular.module('BdApp', [])
                 };
             $http(req).then(function (request) {
                 console.log("success with employee");
+                console.log(request.data);
                 $scope.employeeChosen = request.data;
                 $scope.template = $scope.templates[7];
                 activateButton("employees");
@@ -142,8 +168,29 @@ angular.module('BdApp', [])
             console.log("Oglądanie raportu nr" + $scope.projectName);
         };
 
-        $scope.addSprint = function () {
-            console.log("Tworzenie nowego sprintu");
+        $scope.addSprint = function (startSprintTime, finishSprintTime) {
+            var startDate = (new Date(startSprintTime)).toISOString().split("T")[0];
+            var finishDate = (new Date(finishSprintTime)).toISOString().split("T")[0];
+
+            var json = {
+                start_time:startDate,
+                finishDate:finishDate
+            };
+            var req = {
+                method: 'POST',
+                url: 'http://10.78.25.88:5000/projects/'+$scope.projectID+"/sprints",
+                headers: {
+                    'Content-Type': 'json/application'
+                },
+                data:json
+            };
+            $http(req).then(function (request) {
+                console.log("added project");
+                $scope.fetchProjects();
+
+            }, function () {
+                console.log("failed")
+            });
         };
 
         $scope.deletePerson = function () {
@@ -199,23 +246,25 @@ angular.module('BdApp', [])
 
         $scope.addProject = function (projectName,projectDescription, projectBudget, startTime,finishTime) {
             console.log("Tworzenie projektu o nazwie"+projectName);
-            var startDate = (new Date(startTime)).toISOString().split("T")[0];
-            var finishDate = (new Date(finishTime)).toISOString().split("T")[0];
-
             var json = {
                 name: projectName,
                 description: projectDescription,
                 budget: projectBudget,
-                startDate: startDate,
-                endDate: finishDate
+                start_time: startTime,
+                finish_time: finishTime
             };
+            console.log(json);
             var req = {
                 method: 'POST',
                 url: 'http://10.78.25.88:5000/projects/',
                 headers: {
                     'Content-Type': 'json/application'
                 },
-                data:json
+                data:{name: projectName,
+                description: projectDescription.toUTCString(),
+                budget: 200.0,
+                start_time: startTime.toUTCString(),
+                finish_time: finishTime}
             };
             $http(req).then(function (request) {
                 console.log("added project");
@@ -249,10 +298,10 @@ angular.module('BdApp', [])
                     'Content-Type': 'json/application'
                 }
             };
+
             $http(req).then(function (request) {
                 console.log("fetched projects");
                 $scope.projects = request.data;
-
             }, function () {
                 console.log("failed")
             });

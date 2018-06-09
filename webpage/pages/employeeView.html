@@ -1,12 +1,12 @@
 <div>
-    <div> Pracownik : {{employee.name}}</div>
-    <div>Stanowisko: {{employee.position}}</div>
+    <div> Pracownik : {{employeeChosen.first_name}} {{ employeeChosen.last_name }}</div>
+    <div>Stanowisko: {{employeeChosen.job_position}}</div>
     <div style="margin-top:10px">
         Miesiac:
         <input type="text" class="form-control" ng-model="month" style="width:200px"/>
     </div>
     <div style="margin-top:10px">
-        <button type="button" class="btn btn-primary" ng-click="generateEmployeeRaport()">Wygeneruj raport</button>
+        <button type="button" class="btn btn-primary" ng-click="generateEmployeeRaport(chosenEmployee,month)">Wygeneruj raport</button>
     </div>
 
 </div>
