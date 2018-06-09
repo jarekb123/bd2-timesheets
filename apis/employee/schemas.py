@@ -9,7 +9,7 @@ class SimpleEmployeeSchema(ma.ModelSchema):
     class Meta:
         json_module = simplejson
         model = Employee
-        fields = ('id', 'first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name', 'job_position')
 
 
 class EmployeeSchema(ma.ModelSchema):

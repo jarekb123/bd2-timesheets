@@ -131,3 +131,19 @@ class SprintReport(Resource):
         """Shows sprint report"""
         result = get_sprint_report(sprint_id)
         return result
+
+
+task_model = api.model('TaskApi', {
+    'stage_id': fields.Integer,
+    'description': fields.String
+})
+
+
+@projects_api.route('/<int:project_id>/sprints/<int:sprint_id>/task')
+class SprintTask(Resource):
+
+    @api.expect(task_model, validate=True)
+    def post(self, sprint_id, project_id):
+        new_task = api.payload
+        result = create_task(sprint_id, new_task)
+        return result

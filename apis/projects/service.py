@@ -1,7 +1,7 @@
 from my_app import db
 from database.models import Worklog
 from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole, ProjectEmployeeRoleSchema, Sprint, \
-    SprintSchema, Task, Worklog, Employee
+    SprintSchema, Task, Worklog, Employee, TaskSchema
 from sqlalchemy import func
 from flask import jsonify
 
@@ -135,3 +135,16 @@ def get_sprint_report(sprint_id):
 
     result = [[x, y, str(z)] for x, y, z in result]
     return jsonify(result)
+
+
+def create_task(sprint_id, task_data):
+    """Add new task to project if there isnt one already
+    :param sprint_id: An ID of a task
+    :param task_data: new task data
+    :return Operation status"""
+    task = TaskSchema().load(data=task_data).data
+
+    taskObj = Task(sprint_id=sprint_id, description=task.description, stage_id=task_data['stage_id'])
+    db.session.add(taskObj)
+    db.session.commit()
+    return SprintSchema().jsonify(taskObj)
