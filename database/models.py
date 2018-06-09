@@ -10,7 +10,6 @@ class Employee(db.Model):
     job_position = db.Column(db.String(45), nullable=False)
     contract_finish_date = db.Column(db.Date)
 
-    # tasks = db.relationship('Task', secondary='Employee_task')
 
 
 class EmployeeFreetime(db.Model):
@@ -23,6 +22,12 @@ class EmployeeFreetime(db.Model):
 
     employee = db.relationship('Employee')
     freetime_type = db.relationship('FreetimeType')
+
+    def __init__(self, employee_id, free_hours, date, type_id):
+        self.employee_id = employee_id
+        self.free_hours_sum = free_hours
+        self.freetime_date = date
+        self.freetime_type_id = type_id
 
 
 class EmployeeReport(db.Model):
@@ -119,13 +124,19 @@ class Stage(db.Model):
 class Summarize(db.Model):
     __tablename__ = 'Summarize'
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
     month = db.Column(db.Integer, nullable=False)
     year = db.Column(db.Integer, nullable=False)
     salary = db.Column(db.Float(asdecimal=True), nullable=False)
 
     employee = db.relationship('Employee')
+
+    def __init__(self, employee_id, month, year, salary):
+        self.employee_id = employee_id
+        self.month = month
+        self.year = year
+        self.salary = salary
 
 
 class Task(db.Model):
@@ -156,3 +167,6 @@ class Worklog(db.Model):
 
     employee = db.relationship('Employee')
     task = db.relationship('Task')
+
+    def __repr__(self):
+        return '<Worklog %r, %r, %r>' % (self.employee_id, self.task_id,  self.work_date)

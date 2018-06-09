@@ -1,7 +1,9 @@
 from my_app import ma
 from database.models import Employee
-import simplejson
+from database import schemas
 
+import simplejson
+from marshmallow import fields
 
 class SimpleEmployeeSchema(ma.ModelSchema):
     class Meta:
@@ -14,3 +16,7 @@ class EmployeeSchema(ma.ModelSchema):
     class Meta:
         json_module = simplejson
         model = Employee
+
+
+class EmployeeFreetimeSchema(schemas.EmployeeFreetimeSchema):
+    freetime_type = fields.Nested(schemas.FreetimeTypeSchema)

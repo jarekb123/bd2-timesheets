@@ -26,13 +26,41 @@ class EmployeeApi(Resource):
     @api.expect(employee_model, validate=True)
     def post(self):
         """ Add new employee """
-        add_employee(api.payload)
+        return add_employee(api.payload)
 
 
-@employee_api.route('/<int:id>')
+@employee_api.route('/<int:employee_id>')
 @employee_api.doc(params={'id': 'An ID of an employee'})
 class EmployeeDetailsApi(Resource):
 
-    def get(self, id):
+    def get(self, employee_id):
         """ Get details of an employee """
-        return get_employee(id)
+        return get_employee(employee_id)
+
+
+freetime_model = api.model('Freetime Model', {
+    'freetime_date': fields.Date(required=True),
+    'free_hours_sum': fields.Integer(required=True),
+    'freetime_type_id': fields.Integer(required=True)
+})
+
+
+@employee_api.route('/<int:employee_id>/freetime')
+class EmployeeFreeTimeApi(Resource):
+
+    def get(self, employee_id):
+        """ Get employee's freetime (days off) """
+        return get_employee_freetime(employee_id)
+
+    @api.expect(freetime_model, validate=True)
+    def post(self, employee_id):
+        """ Add new freetime days for employee """
+        return add_employee_freetime(employee_id, api.payload)
+
+
+@employee_api.route('/<int:employee_id>/gen_report/<int:year>/<int:month>')
+class GenerateSummaryApi(Resource):
+
+    def get(self, employee_id, year, month):
+        """ Generates and returns monthly summary of the employee"""
+        return generate_employee_summary(employee_id, year, month)
