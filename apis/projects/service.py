@@ -2,6 +2,7 @@ from my_app import db
 from database.models import Worklog
 from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole, ProjectEmployeeRoleSchema, Sprint, \
     SprintSchema, Task, Worklog, Employee
+from database.models import Report
 from sqlalchemy import func
 from flask import jsonify
 
@@ -134,4 +135,15 @@ def get_sprint_report(sprint_id):
         Worklog.employee_id).all()
 
     result = [[x, y, str(z)] for x, y, z in result]
-    return jsonify(result)
+    result_json = jsonify(result)
+    result_str = str(result)
+    print(result_str)
+    report = Report(description=result_str)
+    db.session.add(report)
+    db.session.commit()
+    return result_json
+
+
+def get_sprint(project_id, sprint_id):
+    sprint = Sprint.query.filter(Sprint.id == sprint_id, Sprint.project_id == project_id).first()
+    return SprintSchema().jsonify(sprint)

@@ -106,7 +106,7 @@ class Sprint(db.Model):
     project = db.relationship('Project')
 
 
-class Report(Sprint):
+class Report(db.Model):
     __tablename__ = 'Report'
 
     sprint_id = db.Column(db.ForeignKey('Sprint.id'), primary_key=True, index=True, autoincrement=True)
