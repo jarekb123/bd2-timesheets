@@ -14,3 +14,12 @@ def log_work(worklog_json):
     else:
         db.session.rollback()
         return {'error': 'Work is not logged'}, 503
+
+
+def get_worklogs():
+
+    worklogs = Worklog.query.all()
+    if worklogs:
+        return WorklogSchema(many=True).jsonify(worklogs)
+    else:
+        return {'error': 'Employee does not exist'}, 404

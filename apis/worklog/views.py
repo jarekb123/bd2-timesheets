@@ -21,3 +21,9 @@ class Worklog(Resource):
     @ns.expect(worklog_model, validate=True)
     def post(self, ):
         return log_work(api.payload)
+
+    def get(self, ):
+        return get_worklogs()
+
+
+

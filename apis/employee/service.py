@@ -1,6 +1,6 @@
 from apis.employee.schemas import Employee, EmployeeSchema, SimpleEmployeeSchema, EmployeeFreetimeSchema
 from database.models import EmployeeFreetime, Worklog, ProjectEmployeeRole, Summarize
-from database.schemas import SummarizeSchema
+from database.schemas import SummarizeSchema, WorklogSchema
 from my_app import db
 
 from sqlalchemy.exc import DatabaseError
@@ -90,3 +90,13 @@ def generate_employee_summary(employee_id, year, month):
             return SummarizeSchema().jsonify(summary)
     except DatabaseError:
         return {'error': 'Summary did not generate properly'}, 501
+
+
+def get_employee_worklog(employee_id):
+
+    worklogs = Worklog.query.filter(Worklog.employee_id == employee_id).all()
+
+    if worklogs:
+        return WorklogSchema(many=True).jsonify(worklogs)
+    else:
+        return {'error': 'Employee didnt log any work'}, 404
