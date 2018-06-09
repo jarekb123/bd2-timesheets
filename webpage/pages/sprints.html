@@ -1,0 +1,37 @@
+<table class="table">
+    <div>
+        <div> Nazwa projektu: {{project.name}}
+        </div>
+        <div>Osoba odpowiedzialna: {{project.person}}</div>
+        <div>
+            <button type="button" class="btn btn-primary" ng-click="deletePerson()">Usuń</button>
+            <button type="button" class="btn btn-primary" ng-click="rewritePerson()">Przypisz</button>
+        </div>
+    </div>
+    <thead>
+    <tr>
+        <th>Numer sprintu</th>
+        <th>Data rozpoczecia</th>
+        <th>Data zakonczenia</th>
+        <th>Akcje</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="sprint in sprints">
+        <td>{{sprint.id}}</td>
+        <td>{{sprint.startDate}}</td>
+        <td>{{sprint.endDate}}</td>
+        <td>
+            <button type="button" class="btn btn-primary" ng-click="sprintViewButton(sprint.id)">Wiecej</button>
+            <button type="button" class="btn btn-primary" ng-click="generateRaport(sprint.id)">Generuj Raport</button>
+            <button type="button" class="btn btn-primary" ng-click="viewRaport(sprint.id)">Zobacz Raport</button>
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div>
+    <div>
+        <button type="button" class="btn btn-primary" ng-click="addSprint()">Dodaj Sprint</button>
+    </div>
+</div>

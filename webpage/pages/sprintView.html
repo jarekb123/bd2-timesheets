@@ -1,0 +1,27 @@
+<table class="table">
+   <div>
+       <div> Sprint nr {{sprintId}}</div>
+   </div>
+    <thead>
+    <tr>
+        <th>Numer zadania</th>
+        <th>Nazwa zadania</th>
+        <th>Akcje</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="task in tasks">
+        <td>{{task.id}}</td>
+        <td>{{task.name}}</td>
+        <td>
+            <button type="button" class="btn btn-primary" ng-click="taskViewButton(task.id)">Wiecej</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div>
+    <div>
+        <input type="text" class="form-control" ng-model="taskName" style="width:200px"/>
+        <button type="button" class="btn btn-primary" ng-click="addTask()">Dodaj Zadanie</button>
+    </div>
+</div>

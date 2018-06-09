@@ -1,0 +1,27 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Nazwa projektu</th>
+        <th>Osoba odpowiedzialna</th>
+        <th>Akcje</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="project in projects">
+        <td>{{project.name}}</td>
+        <td>{{project.person}}</td>
+        <td>
+            <button type="button" class="btn btn-primary" ng-click="sprintsButton(project)">Wiecej</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div>
+    <div>
+        <input type="text" class="form-control" ng-model="projectName" style="width:200px"/>
+
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary" ng-click="addProject()">Dodaj projekt</button>
+    </div>
+</div>

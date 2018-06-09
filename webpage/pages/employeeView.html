@@ -1,0 +1,30 @@
+<div>
+    <div> Pracownik : {{employee.name}}</div>
+    <div>Stanowisko: {{employee.position}}</div>
+    <div style="margin-top:10px">
+        Miesiac:
+        <input type="text" class="form-control" ng-model="month" style="width:200px"/>
+    </div>
+    <div style="margin-top:10px">
+        <button type="button" class="btn btn-primary" ng-click="generateEmployeeRaport()">Wygeneruj raport</button>
+    </div>
+
+</div>
+<hr>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Kiedy</th>
+        <th>Kod Zadania</th>
+        <th>Ile czasu</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="worklog in employeeWorlkogs">
+        <td>{{worklog.when}}</td>
+        <td>{{worklog.taskNo}}</td>
+        <td>{{worklog.time}}</td>
+
+    </tr>
+    </tbody>
+</table>

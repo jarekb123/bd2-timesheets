@@ -1,0 +1,73 @@
+<div>
+    Tytuł {{task.title}}
+</div>
+<hr>
+<table>
+    <tr>
+        <td style="vertical-align: top">Odpowiedzialne osoby</td>
+        <td style="padding-left:10px">
+            <table>
+                <tr ng-repeat="person in persons">
+                    <td>{{person.name}}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" ng-click="deletePerson(person.id)">Usuń</button>
+                    </td>
+                    </div>
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<div>
+    <input type="text" class="form-control" ng-model="personName" style="width:100px"/>
+    <button type="button" class="btn btn-primary" ng-click="addPerson(person.id)">Dodaj Pracownika</button>
+</div>
+<hr>
+<div>
+    Tresc: {{task.content}}
+</div>
+<hr>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Data</th>
+        <th>Co</th>
+        <th>Kto</th>
+        <th>Czas</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="worklog in worklogs">
+        <td>{{worklog.date}}</td>
+        <td>{{worklog.what}}</td>
+        <td>{{worklog.who}}</td>
+        <td>{{worklog.time}}</td>
+    </tr>
+    </tbody>
+</table>
+<hr>
+<table>
+    <tr>
+        <td>Co:</td>
+        <td>
+            <input type="text" class="form-control" ng-model="what" style="width:200px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>Kto:</td>
+        <td>
+            <input type="text" class="form-control" ng-model="who" style="width:200px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Ile czasu:
+        </td>
+        <td>
+            <input type="text" class="form-control" ng-model="howMuch" style="width:200px"/>
+        </td>
+    </tr>
+</table>
+<button type="button" class="btn btn-primary" ng-click="addWorklog()">Dodaj Worklog</button>
