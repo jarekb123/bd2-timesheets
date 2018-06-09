@@ -8,8 +8,8 @@
     </thead>
     <tbody>
     <tr ng-repeat="employee in employees">
-        <td>{{employee.name}}</td>
-        <td>{{employee.position}}</td>
+        <td>{{employee.first_name}} {{ employee.last_name }}</td>
+        <td>{{employee.job_position}}</td>
         <td>
             <button type="button" class="btn btn-primary" ng-click="employeeViewButton(employee)">Wiecej</button>
 

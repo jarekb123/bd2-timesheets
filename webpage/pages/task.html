@@ -21,8 +21,8 @@
     </tr>
 </table>
 <div>
-    <input type="text" class="form-control" ng-model="personName" style="width:100px"/>
-    <button type="button" class="btn btn-primary" ng-click="addPerson(person.id)">Dodaj Pracownika</button>
+    <select class="form-control" ng-model="newTaskEmployee" ng-options="item as item.label for item in items track by item.id" style="width:200px"/>
+    <button type="button" class="btn btn-primary" ng-click="addPerson(newTaskEmployee)">Dodaj Pracownika</button>
 </div>
 <hr>
 <div>
@@ -58,7 +58,7 @@
     <tr>
         <td>Kto:</td>
         <td>
-            <input type="text" class="form-control" ng-model="who" style="width:200px"/>
+            <select class="form-control" ng-model="workLogEmployee" ng-options="item as item.label for item in items track by item.id" style="width:200px"/>
         </td>
     </tr>
     <tr>
@@ -69,5 +69,14 @@
             <input type="text" class="form-control" ng-model="howMuch" style="width:200px"/>
         </td>
     </tr>
+    <tr>
+        <td>
+            Kiedy:
+        </td>
+        <td>
+            <input type="date" class="form-control" placeholder="Data końca" ng-model="workDate" style="width:200px;margin-bottom:4mm"/>
+
+        </td>
+    </tr>
 </table>
-<button type="button" class="btn btn-primary" ng-click="addWorklog()">Dodaj Worklog</button>
+<button type="button" class="btn btn-primary" ng-click="addWorklog(what, workLogEmployee, howMuch,workDate, task)">Dodaj Worklog</button>
