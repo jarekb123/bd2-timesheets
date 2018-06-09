@@ -1,0 +1,59 @@
+<div>
+    <div>
+        <div> Nazwa projektu: {{ project.name }}
+        </div>
+        <div>
+            Osoba przynależne:
+            <table>
+                <tr ng-repeat="person in project.people">
+                    <td>{{ person.name }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" ng-click="deletePerson(person.id)">Usuń</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <div>
+                <label>Wybierz pracownika do dodania:</label>
+                <select class="form-control" ng-model="newProjectEmployee"
+                        ng-options="item as item.firstname for item in employees track by item.id" style="width:200px">
+                </select>
+                <button type="button" class="btn btn-primary" ng-click="rewritePerson()">Przypisz</button>
+            </div>
+        </div>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>Numer sprintu</th>
+            <th>Data rozpoczecia</th>
+            <th>Data zakonczenia</th>
+            <th>Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="sprint in sprints">
+            <td>{{ sprint.id }}</td>
+            <td>{{ sprint.start_time | date : format : timezone}}</td>
+            <td>{{ sprint.finish_time| date : format : timezone }}</td>
+            <td>
+                <button type="button" class="btn btn-primary" ng-click="sprintViewButton(sprint.id)">Wiecej</button>
+                <button type="button" class="btn btn-primary" ng-click="generateRaport(sprint.id)">Generuj Raport
+                </button>
+                <button type="button" class="btn btn-primary" ng-click="viewRaport(sprint.id)">Zobacz Raport
+                </button>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <div>
+            <label>Data startu</label>
+            <input type="date" class="form-control" placeholder="Data startu" ng-model="startSprintTime" style="width:200px;margin-bottom:4mm"/>
+            <label>Data końca</label>
+            <input type="date" class="form-control" placeholder="Data końca" ng-model="finishSprintTime" style="width:200px;margin-bottom:4mm"/>
+            <button type="button" class="btn btn-primary" ng-click="addSprint(startSprintTime, finishSprintTime)">Dodaj Sprint</button>
+        </div>
+    </div>

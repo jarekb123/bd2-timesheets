@@ -1,0 +1,19 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Imie i nazwisko</th>
+        <th>Stanowisko</th>
+        <th>Akcje</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="employee in employees">
+        <td>{{employee.first_name}} {{ employee.last_name }}</td>
+        <td>{{employee.job_position}}</td>
+        <td>
+            <button type="button" class="btn btn-primary" ng-click="employeeViewButton(employee)">Wiecej</button>
+
+        </td>
+    </tr>
+    </tbody>
+</table>

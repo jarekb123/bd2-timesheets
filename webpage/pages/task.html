@@ -1,0 +1,82 @@
+<div>
+    Tytuł {{task.title}}
+</div>
+<hr>
+<table>
+    <tr>
+        <td style="vertical-align: top">Odpowiedzialne osoby</td>
+        <td style="padding-left:10px">
+            <table>
+                <tr ng-repeat="person in persons">
+                    <td>{{person.name}}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" ng-click="deletePerson(person.id)">Usuń</button>
+                    </td>
+                    </div>
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<div>
+    <select class="form-control" ng-model="newTaskEmployee" ng-options="item as item.label for item in items track by item.id" style="width:200px"/>
+    <button type="button" class="btn btn-primary" ng-click="addPerson(newTaskEmployee)">Dodaj Pracownika</button>
+</div>
+<hr>
+<div>
+    Tresc: {{task.content}}
+</div>
+<hr>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Data</th>
+        <th>Co</th>
+        <th>Kto</th>
+        <th>Czas</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="worklog in worklogs">
+        <td>{{worklog.date}}</td>
+        <td>{{worklog.what}}</td>
+        <td>{{worklog.who}}</td>
+        <td>{{worklog.time}}</td>
+    </tr>
+    </tbody>
+</table>
+<hr>
+<table>
+    <tr>
+        <td>Co:</td>
+        <td>
+            <input type="text" class="form-control" ng-model="what" style="width:200px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>Kto:</td>
+        <td>
+            <select class="form-control" ng-model="workLogEmployee" ng-options="item as item.label for item in items track by item.id" style="width:200px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Ile czasu:
+        </td>
+        <td>
+            <input type="text" class="form-control" ng-model="howMuch" style="width:200px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Kiedy:
+        </td>
+        <td>
+            <input type="date" class="form-control" placeholder="Data końca" ng-model="workDate" style="width:200px;margin-bottom:4mm"/>
+
+        </td>
+    </tr>
+</table>
+<button type="button" class="btn btn-primary" ng-click="addWorklog(what, workLogEmployee, howMuch,workDate, task)">Dodaj Worklog</button>
