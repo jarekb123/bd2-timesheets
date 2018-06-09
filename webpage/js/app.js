@@ -61,7 +61,7 @@ angular.module('BdApp', [])
         $scope.sprintsButton = function (val) {
             var req = {
                 method: 'GET',
-                url: 'http://10.78.25.88:5000/projects/'+val.id,
+                url: 'http://localhost:5000/projects/'+val.id,
                 headers: {
                     'Content-Type': 'json/application'
                 }
@@ -73,7 +73,7 @@ angular.module('BdApp', [])
                 $scope.project = request.data;
                 var req = {
                     method: 'GET',
-                    url: 'http://10.78.25.88:5000/projects/'+val.id+"/sprints",
+                    url: 'http://localhost:5000/projects/'+val.id+"/sprints",
                     headers: {
                         'Content-Type': 'json/application'
                     }
@@ -117,7 +117,7 @@ angular.module('BdApp', [])
             console.log(employee.id);
             var req = {
                     method: 'GET',
-                    url: 'http://10.78.25.88:5000/employees/'+employee.id,
+                    url: 'http://localhost:5000/employees/'+employee.id,
                     headers: {
                         'Content-Type': 'json/application'
                     }
@@ -178,7 +178,7 @@ angular.module('BdApp', [])
             };
             var req = {
                 method: 'POST',
-                url: 'http://10.78.25.88:5000/projects/'+$scope.projectID+"/sprints",
+                url: 'http://localhost:5000/projects/'+$scope.projectID+"/sprints",
                 headers: {
                     'Content-Type': 'json/application'
                 },
@@ -256,7 +256,7 @@ angular.module('BdApp', [])
             console.log(json);
             var req = {
                 method: 'POST',
-                url: 'http://10.78.25.88:5000/projects/',
+                url: 'http://localhost:5000/projects/',
                 headers: {
                     'Content-Type': 'json/application'
                 },
@@ -277,7 +277,7 @@ angular.module('BdApp', [])
         $scope.fetchEmployees=function(){
             var req = {
                 method: 'GET',
-                url: 'http://10.78.25.88:5000/employees/',
+                url: 'http://localhost:5000/employees/',
                 headers: {
                     'Content-Type': 'json/application'
                 }
@@ -293,7 +293,7 @@ angular.module('BdApp', [])
         $scope.fetchProjects=function(){
             var req = {
                 method: 'GET',
-                url: 'http://10.78.25.88:5000/projects/',
+                url: 'http://localhost:5000/projects/',
                 headers: {
                     'Content-Type': 'json/application'
                 }
