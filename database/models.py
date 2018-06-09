@@ -124,10 +124,9 @@ class Stage(db.Model):
 class Summarize(db.Model):
     __tablename__ = 'Summarize'
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False, index=True)
-    month = db.Column(db.Integer, nullable=False)
-    year = db.Column(db.Integer, nullable=False)
+    employee_id = db.Column(db.ForeignKey('Employee.id'), primary_key=True, nullable=False)
+    month = db.Column(db.Integer, primary_key=True, nullable=False)
+    year = db.Column(db.Integer, primary_key=True, nullable=False)
     salary = db.Column(db.Float(asdecimal=True), nullable=False)
 
     employee = db.relationship('Employee')

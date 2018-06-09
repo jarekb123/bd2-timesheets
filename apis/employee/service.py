@@ -70,7 +70,8 @@ def add_employee_freetime(employee_id, freetime_json):
 
 
 def generate_employee_summary(employee_id, year, month):
-    worklogs = Worklog.query.filter(Worklog.employee_id == employee_id, func.month(Worklog.work_date) == month,
+    worklogs = Worklog.query.filter(Worklog.employee_id == employee_id,
+                                    func.month(Worklog.work_date) == month,
                                     func.year(Worklog.work_date) == year).all()
 
     salary = decimal.Decimal(0.0)
@@ -84,7 +85,7 @@ def generate_employee_summary(employee_id, year, month):
     try:
         db.session.add(summary)
         db.session.flush()
-        if summary.id:
+        if summary in db.session:
             db.session.commit()
             return SummarizeSchema().jsonify(summary)
     except DatabaseError:
