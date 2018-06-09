@@ -104,3 +104,4 @@ ENV/
 .idea/
 
 my_app/settings.py
+/bd2-timesheets.iml
