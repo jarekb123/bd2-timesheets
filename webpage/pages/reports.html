@@ -1,0 +1,17 @@
+<div>
+    Raport dla sprintu {{ sprint.id }}
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Kto</th>
+        <th>Ile</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in report">
+        <td>{{ row.first_name}} {{ row.last_name }}</td>
+        <td>{{ row.hours }}</td>
+    </tr>
+    </tbody>
+</table>
