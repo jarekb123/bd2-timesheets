@@ -8,39 +8,24 @@ angular.module('BdApp', [])
                 {name: 'sprintView.html', url: 'pages/sprintView.html'},
                 {name: 'task.html', url: 'pages/task.html'},
                 {name: 'employees.html', url: 'pages/employees.html'},
-                {name: 'employeeView.html', url: 'pages/employeeView.html'}
+                {name: 'employeeView.html', url: 'pages/employeeView.html'},
+                {name: 'reports.html', url: 'pages/reports.html'}
             ];
 
-        $scope.projects = [{id: "1", name: "Projekt 1", person: "Adam"},
-            {id: "2", name: "Projekt 2", person: "Badam"}
-        ];
-
-        $scope.project = [{}]
-
-        $scope.sprints = [{id: "1", startDate: "12-12-2012", endDate: "12-01-2013"},
-            {id: "2", startDate: "12-01-2013", endDate: "12-02-2013"}
-        ];
-
-        $scope.tasks = [{id: "1", name: "Task 1"},
-            {id: "2", name: "Task 2"}
-        ];
-
-        $scope.persons = [{id: "1", name: "Adam"},
-            {id: "2", name: "Badam"}
-        ];
-
-        $scope.worklogs = [{date: "10-12-2012", what: "nothing", who: "Adam", time: "1h"},
-            {date: "10-12-2013", what: "compiling", who: "Badam", time: "3h"}
-        ];
-
-        $scope.items = [{
+        $scope.taskStage = ["Waiting", "In progress", "Done"];
+        $scope.taskItems = [{
             id: 1,
-            label: 'Pracownik 1',
+            label: 'Waiting',
         }, {
             id: 2,
-            label: 'Pracownik 2',
-        }];
-
+            label: 'In progress',
+        },
+            {
+                id: 3,
+                label: 'Done'
+            }];
+        $scope.anyReport = false;
+        ////////NAVIGATION///////////////////
         $scope.homeButton = function () {
             $scope.template = $scope.templates[0];
             activateButton("home");
@@ -58,54 +43,6 @@ angular.module('BdApp', [])
 
         };
 
-        $scope.sprintsButton = function (val) {
-            var req = {
-                method: 'GET',
-                url: 'http://localhost:5000/projects/' + val.id,
-                headers: {
-                    'Content-Type': 'json/application'
-                }
-            };
-            $scope.projectID = val.id;
-            $http(req).then(function (request) {
-                console.log("success with sprints");
-                console.log(request.data);
-                $scope.project = request.data;
-                var req = {
-                    method: 'GET',
-                    url: 'http://localhost:5000/projects/' + val.id + "/sprints",
-                    headers: {
-                        'Content-Type': 'json/application'
-                    }
-                };
-                $http(req).then(function (request) {
-                    console.log("success with sprints");
-                    console.log(request.data);
-                    $scope.sprints = request.data;
-                    $scope.template = $scope.templates[3];
-                }, function (request) {
-                    console.log("failed sprints")
-                });
-                activateButton("projects");
-            }, function () {
-                console.log("failed projects")
-            });
-        };
-
-        $scope.sprintViewButton = function (val) {
-            console.log(val.id);
-            $scope.sprintId = {};
-            $scope.sprintId = val;
-            $scope.template = $scope.templates[4];
-            activateButton("projects");
-        };
-
-        $scope.taskViewButton = function (id) {
-            console.log(id);
-            $scope.taskID = id;
-            $scope.template = $scope.templates[5];
-            activateButton("projects");
-        };
 
         $scope.employeesButton = function () {
             console.log();
@@ -126,8 +63,25 @@ angular.module('BdApp', [])
                 console.log("success with employee");
                 console.log(request.data);
                 $scope.employeeChosen = request.data;
-                $scope.template = $scope.templates[7];
-                activateButton("employees");
+                var req = {
+                    method: 'GET',
+                    url: 'http://localhost:5000/employees/' + employee.id + '/tasks',
+                    headers: {
+                        'Content-Type': 'json/application'
+                    }
+                };
+                $http(req).then(function (request) {
+                    console.log('success with tasks employee');
+                    $scope.employeeTasks = request.data;
+                    $scope.employeeTasks.forEach(function (e) {
+                        e.stage = $scope.taskStage[e.stage - 1];
+                    });
+                    console.log($scope.employeeTasks);
+                    $scope.template = $scope.templates[7];
+                    activateButton("employees");
+                }, function () {
+                    console.log('failed');
+                });
 
             }, function () {
                 console.log("failed")
@@ -158,32 +112,41 @@ angular.module('BdApp', [])
             }
         }
 
+////// EMPLOYEE VIEW ///////
+        $scope.generateEmployeeRaport = function (month, year) {
+            var req = {
+                method: 'GET',
+                url: 'http://localhost:5000/employees/' + $scope.employeeChosen.id + '/gen_report/' + year + '/' + month,
+                headers: {
+                    'Content-Type': 'json/application'
+                }
+            };
 
-        $scope.generateRaport = function () {
-            console.log("Generowanie raportu sprint nr" + $scope.projectName);
+            $http(req).then(function (request) {
+                console.log("fetched report");
+                $scope.employeeReport = request.data;
+                $scope.anyReport = true;
+            }, function () {
+                console.log("failed")
+            });
         };
+///////////////////// PROJECT VIEW FUNCTIONS ///////////////
+        $scope.addProject = function (projectName, projectDescription, projectBudget, startTime, finishTime) {
+            console.log("Tworzenie projektu o nazwie" + projectName);
 
-        $scope.viewRaport = function () {
-            console.log("Oglądanie raportu nr" + $scope.projectName);
-        };
-
-        $scope.addSprint = function (startSprintTime, finishSprintTime) {
-            var json = {
-                    start_time: startSprintTime.toISOString(),
-                    finish_time: finishSprintTime.toISOString()
-                };
-            json = JSON.stringify(json);
-           console.log(json);
             var req = {
                 method: 'POST',
-                url: 'http://localhost:5000/projects/1/sprints',
+                url: 'http://localhost:5000/projects/',
                 headers: {
-                    'Content-Type': 'json/application',
-                    'Accept': 'application/json'
+                    // 'Content-Type': 'json/application'
                 },
                 data: {
-                    start_time: startSprintTime.toISOString(),
-                    finish_time: finishSprintTime.toISOString()
+                    name: projectName,
+                    description: projectDescription,
+                    budget: projectBudget,
+                    start_time: startTime.toISOString(),
+                    finish_time: finishTime.toISOString()
+
                 }
             };
             $http(req).then(function (request) {
@@ -194,26 +157,202 @@ angular.module('BdApp', [])
                 console.log("failed")
             });
         };
+        $scope.sprintsButton = function (val) {
+            var req = {
+                method: 'GET',
+                url: 'http://localhost:5000/projects/' + val.id,
+                headers: {
+                    'Content-Type': 'json/application'
+                }
+            };
+            $scope.projectID = val.id;
+            $http(req).then(function (request) {
+                console.log("success with sprints");
+                console.log(request.data);
+                $scope.project = request.data;
+                var req = {
+                    method: 'GET',
+                    url: 'http://localhost:5000/projects/' + val.id + "/sprints",
+                    headers: {
+                        'Content-Type': 'json/application'
+                    }
+                };
+                $http(req).then(function (request) {
+                    console.log("success with sprints");
+                    console.log(request.data);
+                    $scope.sprints = request.data;
+                    var req = {
+                        method: 'GET',
+                        url: 'http://localhost:5000/projects/' + val.id + "/employees",
+                        headers: {
+                            'Content-Type': 'json/application'
+                        }
+                    };
+                    $http(req).then(function (request) {
+                        console.log("success with employees");
+                        console.log(request.data);
+                        $scope.projectPeople = request.data;
+                        $scope.template = $scope.templates[3];
+                    }, function () {
 
-        $scope.deletePerson = function () {
-            console.log("Usuwanie odpowiedzialnej osoby");
+                    });
+
+
+                }, function (request) {
+                    console.log("failed sprints")
+                });
+                activateButton("projects");
+            }, function () {
+                console.log("failed projects")
+            });
+        };
+/////////////// SPRINTS PAGE FUNCTIONS ///////////////////
+
+        $scope.sprintViewButton = function (val) {
+            console.log(val.id);
+            $scope.sprintId = val.id;
+            var req = {
+                method: 'GET',
+                url: 'http://localhost:5000/projects/' + $scope.projectID + '/sprints/' + val.id,
+                headers: {
+                    'Content-Type': 'json/application'
+                }
+            };
+            $http(req).then(function (request) {
+                console.log("success with sprint basic");
+                $scope.sprint = request.data;
+                var req = {
+                    method: 'GET',
+                    url: 'http://localhost:5000/projects/' + $scope.projectID + '/sprints/' + val.id + '/task',
+                    headers: {
+                        'Content-Type': 'json/application'
+                    }
+                };
+                $http(req).then(function (request) {
+                    console.log('success with sprint tasks');
+                    $scope.sprintTasks = request.data;
+                    $scope.sprintTasks.forEach(function (e) {
+                        e.stage = $scope.taskStage[e.stage - 1];
+                    });
+                }, function (request) {
+                    console.log('failed sprint tasks');
+                });
+            }, function (request) {
+                console.log("failed sprint basic")
+            });
+            $scope.template = $scope.templates[4];
+            activateButton("projects");
         };
 
-        $scope.rewritePerson = function (chosenBoss) {
-            console.log("Przypisywanie wybranej osoby" + chosenBoss.id);
+
+        $scope.viewRaport = function (val) {
+            console.log("Oglądanie raportu nr" + val.id);
+            $scope.sprint = val;
+            $scope.template = $scope.templates[8];
+        };
+
+        $scope.addSprint = function (startSprintTime, finishSprintTime) {
+            $scope.errorOverlapSprint = false;
+            $scope.errorSprint = false;
 
             var json = {
-                employee_id: chosenBoss.id,
-                employee_role_id: "1",
-                rate: "1000"
+                start_time: startSprintTime.toISOString(),
+                finish_time: finishSprintTime.toISOString()
             };
-
+            json = JSON.stringify(json);
             console.log(json);
+            var req = {
+                method: 'POST',
+                url: 'http://localhost:5000/projects/1/sprints',
+                headers: {},
+                data: {
+                    start_time: startSprintTime.toISOString(),
+                    finish_time: finishSprintTime.toISOString()
+                }
+            };
+            $http(req).then(function (request) {
+                console.log("added project");
+                var elem = {id: $scope.projectID};
+                $scope.sprintsButton(elem);
+
+            }, function (response) {
+                console.log("failed");
+
+                if (response.status == 409) {
+                    $scope.errorOverlapSprint = true;
+                } else {
+                    $scope.errorSprint = true;
+                }
+            });
+        };
+        $scope.deleteProjectPerson = function (chosenPersonId) {
+            var req = {
+                method: 'DELETE',
+                url: 'http://localhost:5000/projects/' + $scope.projectID + '/employees/' + chosenPersonId,
+                headers: {}
+            };
+            $http(req).then(function (request) {
+                console.log("deleted person");
+                var elem = {id: $scope.projectID};
+                $scope.sprintsButton(elem);
+            }, function (request) {
+                console.log("failed downloading");
+            });
+
         };
 
-        $scope.addTask = function () {
-            console.log("Dodawanie zadania" + $scope.taskName);
+        $scope.rewriteProjectPerson = function (chosenBoss) {
+
+            var req = {
+                method: 'POST',
+                url: 'http://localhost:5000/projects/' + $scope.projectID + '/employees',
+                headers: {},
+                data: {
+                    employee_id: chosenBoss.id,
+                    employee_role_id: 1,
+                    rate: "1000"
+                }
+            };
+            $http(req).then(function (request) {
+                console.log("added person");
+                var elem = {id: $scope.projectID};
+                $scope.sprintsButton(elem);
+
+            }, function () {
+                console.log("failed")
+            });
+
         };
+
+////////////// SPRINT VIEW FUNCTIONS////////////////////
+        $scope.addTask = function (description, stage) {
+            var req = {
+                method: 'POST',
+                url: 'http://localhost:5000/projects/' + $scope.projectID + '/sprints/' + $scope.sprintId + '/task',
+                headers: {},
+                data: {
+                    description: description,
+                    stage_id: stage.id,
+                }
+            };
+            $http(req).then(function (request) {
+                console.log("added task");
+                var elem = {id: $scope.sprintId};
+                $scope.sprintViewButton(elem);
+
+            }, function () {
+                console.log("failed")
+            });
+
+        };
+        $scope.taskViewButton = function (task) {
+            console.log(task);
+            $scope.task = task;
+            $scope.template = $scope.templates[5];
+            activateButton("projects");
+        };
+
+/////// TASK VIEW FUNCTIONS/////
 
         $scope.deletePerson = function (val) {
             console.log("Kasowanie osoby nr " + val);
@@ -226,52 +365,56 @@ angular.module('BdApp', [])
         };
 
         $scope.addPerson = function (newEmployee) {
-            console.log("Dodawanie osoby " + newEmployee.id);
-            var json = {
-                employeeId: newEmployee.id,
-                taskId: $scope.taskID
-            };
-            console.log(json);
-        };
-
-        $scope.addWorklog = function (what, workLogEmployee, howMuch, workDate) {
-
-            var json = {
-                employee_id: workLogEmployee.id,
-                task_id: $scope.taskID,
-                description: what,
-                work_date: workDate.toISOString(),
-                logged_hours: howMuch
-            };
-            console.log(json);
-        };
-
-        $scope.addProject = function (projectName, projectDescription, projectBudget, startTime, finishTime) {
-            console.log("Tworzenie projektu o nazwie" + projectName);
-
             var req = {
                 method: 'POST',
-                url: 'http://localhost:5000/projects/',
-                headers: {
-                    'Content-Type': 'json/application'
-                },
+                url: 'http://localhost:5000/employees/' + newEmployee.id + '/tasks',
+                headers: {},
                 data: {
-                name: projectName,
-                description: projectDescription,
-                budget: projectBudget,
-                start_time: startTime.toISOString(),
-                finish_time: finishTime.toISOString()
-
-            }
+                    employee_id: workLogEmployee.id,
+                    task_id: $scope.task.id,
+                    description: what,
+                    work_date: date,
+                    logged_hours: parseInt(howMuch)
+                }
             };
             $http(req).then(function (request) {
-                console.log("added project");
-                $scope.fetchProjects();
+                console.log("added worklog");
+
+                $scope.taskViewButton($scope.task);
 
             }, function () {
                 console.log("failed")
             });
+
         };
+
+        $scope.addWorklog = function (what, workLogEmployee, howMuch, workDate) {
+            var date = (new Date(workDate)).toISOString().split("T")[0];
+            var req = {
+                method: 'POST',
+                url: 'http://localhost:5000/worklog/',
+                headers: {},
+                data: {
+                    employee_id: workLogEmployee.id,
+                    task_id: $scope.task.id,
+                    description: what,
+                    work_date: date,
+                    logged_hours: parseInt(howMuch)
+                }
+            };
+            $http(req).then(function (request) {
+                console.log("added worklog");
+
+                $scope.taskViewButton($scope.task);
+
+            }, function () {
+                console.log("failed")
+            });
+
+        };
+
+
+        ////////////// FIRST FETCHES////////////////////
         $scope.fetchEmployees = function () {
             var req = {
                 method: 'GET',
@@ -283,6 +426,17 @@ angular.module('BdApp', [])
             $http(req).then(function (request) {
                 console.log("fetched employees");
                 $scope.employees = request.data;
+                $scope.items = [];
+
+                $scope.employees.forEach(function (e) {
+                    var name = e.first_name + " " + e.last_name;
+                    var elem = {
+                        id: e.id,
+                        label: name
+                    };
+                    $scope.items.push(elem);
+
+                });
 
             }, function () {
                 console.log("failed")
@@ -307,4 +461,5 @@ angular.module('BdApp', [])
 
         $scope.fetchEmployees();
         $scope.fetchProjects();
-    }]);
+    }
+    ]);

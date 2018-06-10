@@ -1,6 +1,7 @@
 <div>
-    Tytuł {{task.title}}
+    Numer zadania {{task.id}}
 </div>
+<div>Status: {{ task.stage }}</div>
 <hr>
 <table>
     <tr>
@@ -26,7 +27,10 @@
 </div>
 <hr>
 <div>
-    Tresc: {{task.content}}
+    Opis: {{task.description}}
+</div>
+<div>
+    Data utworzenia: {{ task.creation_time| date : format : timezone }}
 </div>
 <hr>
 <table class="table">
