@@ -138,7 +138,7 @@ def get_sprint_report(project_id, sprint_id):
     result = [[x, y, str(z)] for x, y, z in result]
     result_json = jsonify(result)
     result_str = str(result)
-    report = Report(description=result_str)
+    report = Report(sprint_id=sprint_id, description=result_str)
     db.session.add(report)
     db.session.commit()
     return result_json
