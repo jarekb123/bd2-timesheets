@@ -248,7 +248,25 @@ angular.module('BdApp', [])
         $scope.viewRaport = function (val) {
             console.log("Oglądanie raportu nr" + val.id);
             $scope.sprint = val;
-            $scope.template = $scope.templates[8];
+            var req = {
+                method: 'GET',
+                url: 'http://localhost:5000/projects/' + $scope.projectID + '/sprints/' + $scope.sprint.id + '/report',
+                headers: {}
+            };
+
+            $http(req).then(function (request) {
+                console.log("fetched projects");
+                console.log(request.data);
+                $scope.report = request.data;
+                $scope.report.forEach(function (e) {
+                    e.name = e[0] + ' ' + e[1];
+                    e.hours = e[2];
+                });
+                $scope.template = $scope.templates[8];
+
+            }, function () {
+                console.log("failed")
+            });
         };
 
         $scope.addSprint = function (startSprintTime, finishSprintTime) {
@@ -348,6 +366,33 @@ angular.module('BdApp', [])
         $scope.taskViewButton = function (task) {
             console.log(task);
             $scope.task = task;
+            var req = {
+                method: 'GET',
+                url: 'http://localhost:5000/projects/' + $scope.projectID + '/sprints/' + $scope.sprint.id + '/task/' + task.id + '/worklog',
+                headers: {
+                    'Content-Type': 'json/application'
+                }
+            };
+
+            $http(req).then(function (request) {
+                console.log("fetched worklogs");
+                $scope.taskWorklogs = request.data;
+                var req = {
+                    method: 'GET',
+                    url: 'http://localhost:5000/projects/' + $scope.projectID + '/sprints/' + $scope.sprint.id + '/task/' + task.id + '/employees',
+                    headers: {
+                        'Content-Type': 'json/application'
+                    }
+                };
+                $http(req).then(function (request) {
+                    console.log('success task employees');
+                    $scope.taskEmployees = request.data;
+                }, function (request) {
+                    console.log('failed');
+                })
+            }, function () {
+                console.log("failed")
+            });
             $scope.template = $scope.templates[5];
             activateButton("projects");
         };
@@ -355,30 +400,37 @@ angular.module('BdApp', [])
 /////// TASK VIEW FUNCTIONS/////
 
         $scope.deletePerson = function (val) {
-            console.log("Kasowanie osoby nr " + val);
-            var json = {
-                employeeId: val,
-                taskId: $scope.taskID
+            var req = {
+                method: 'DELETE',
+                url: 'http://localhost:5000/projects/' + $scope.projectID + '/sprints/' + $scope.sprint.id + '/task/' + $scope.task.id + '/employees',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    employee_id: val.id
+                }
             };
-            console.log(json);
+            $http(req).then(function (request) {
+                console.log("deleted Person");
+                $scope.taskViewButton($scope.task);
+
+            }, function () {
+                console.log("failed")
+            });
 
         };
 
         $scope.addPerson = function (newEmployee) {
             var req = {
                 method: 'POST',
-                url: 'http://localhost:5000/employees/' + newEmployee.id + '/tasks',
+                url: 'http://localhost:5000/projects/' + $scope.projectID + '/sprints/' + $scope.sprint.id + '/task/' + $scope.task.id + '/employees',
                 headers: {},
                 data: {
-                    employee_id: workLogEmployee.id,
-                    task_id: $scope.task.id,
-                    description: what,
-                    work_date: date,
-                    logged_hours: parseInt(howMuch)
+                    employee_id: newEmployee.id
                 }
             };
             $http(req).then(function (request) {
-                console.log("added worklog");
+                console.log("added persion");
 
                 $scope.taskViewButton($scope.task);
 
