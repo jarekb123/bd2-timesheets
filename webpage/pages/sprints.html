@@ -2,13 +2,14 @@
     <div>
         <div> Nazwa projektu: {{ project.name }}
         </div>
+        <hr>
         <div>
             Osoba przynależne:
             <table>
-                <tr ng-repeat="person in project.people">
-                    <td>{{ person.name }}</td>
+                <tr ng-repeat="person in projectPeople">
+                    <td>{{ person.employee.first_name }} {{ person.employee.last_name }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" ng-click="deletePerson(person.id)">Usuń</button>
+                        <button type="button" class="btn btn-primary" ng-click="deleteProjectPerson(person.employee.id)">Usuń</button>
                     </td>
                 </tr>
             </table>
@@ -17,12 +18,13 @@
             <div>
                 <label>Wybierz pracownika do dodania:</label>
                 <select class="form-control" ng-model="newProjectEmployee"
-                        ng-options="item as item.firstname for item in employees track by item.id" style="width:200px">
+                        ng-options="item as item.label for item in items track by item.id" style="width:200px">
                 </select>
-                <button type="button" class="btn btn-primary" ng-click="rewritePerson()">Przypisz</button>
+                <button type="button" class="btn btn-primary" ng-click="rewriteProjectPerson(newProjectEmployee)">Przypisz</button>
             </div>
         </div>
     </div>
+    <hr>
     <table>
         <thead>
         <tr>
@@ -38,10 +40,10 @@
             <td>{{ sprint.start_time | date : format : timezone}}</td>
             <td>{{ sprint.finish_time| date : format : timezone }}</td>
             <td>
-                <button type="button" class="btn btn-primary" ng-click="sprintViewButton(sprint.id)">Wiecej</button>
-                <button type="button" class="btn btn-primary" ng-click="generateRaport(sprint.id)">Generuj Raport
+                <button type="button" class="btn btn-primary" ng-click="sprintViewButton(sprint)">Wiecej</button>
+                <button type="button" class="btn btn-primary" ng-click="generateRaport(sprint)">Generuj Raport
                 </button>
-                <button type="button" class="btn btn-primary" ng-click="viewRaport(sprint.id)">Zobacz Raport
+                <button type="button" class="btn btn-primary" ng-click="viewRaport(sprint)">Zobacz Raport
                 </button>
 
             </td>
@@ -51,9 +53,20 @@
     <div>
         <div>
             <label>Data startu</label>
-            <input type="date" class="form-control" placeholder="Data startu" ng-model="startSprintTime" style="width:200px;margin-bottom:4mm"/>
+            <input type="date" class="form-control" placeholder="Data startu" ng-model="startSprintTime"
+                   style="width:200px;margin-bottom:4mm"/>
             <label>Data końca</label>
-            <input type="date" class="form-control" placeholder="Data końca" ng-model="finishSprintTime" style="width:200px;margin-bottom:4mm"/>
-            <button type="button" class="btn btn-primary" ng-click="addSprint(startSprintTime, finishSprintTime)">Dodaj Sprint</button>
+            <input type="date" class="form-control" placeholder="Data końca" ng-model="finishSprintTime"
+                   style="width:200px;margin-bottom:4mm"/>
+            <button type="button" class="btn btn-primary" ng-click="addSprint(startSprintTime, finishSprintTime)">Dodaj
+                Sprint
+            </button>
+            <div class="alert alert-danger" ng-if="errorOverlapSprint">
+                <strong>Błąd!</strong> Nie można stworzyć sprintu bo się nakłada
+            </div>
+            <div class="alert alert-danger" ng-if="errorSprint">
+                <strong>Błąd!</strong> Nie można stworzyć sprintu, błąd serwera
+            </div>
         </div>
     </div>
+</div>
