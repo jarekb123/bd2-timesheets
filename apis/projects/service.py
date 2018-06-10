@@ -1,8 +1,8 @@
 from my_app import db
 from database.models import Worklog
 from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole, ProjectEmployeeRoleSchema, Sprint, \
-SprintSchema, Task, Worklog, Employee, TaskSchema
-from database.models import Report
+    SprintSchema, Task, Worklog, Employee, TaskSchema, EmployeeSchema, WorklogSchemaSimple
+from database.models import Report, EmployeeRole, t_Employee_task
 from sqlalchemy import func
 from flask import jsonify
 
@@ -148,6 +148,7 @@ def get_sprint(project_id, sprint_id):
     sprint = Sprint.query.filter(Sprint.id == sprint_id, Sprint.project_id == project_id).first()
     return SprintSchema().jsonify(sprint)
 
+
 def create_task(sprint_id, task_data):
     """Add new task to project if there isnt one already
     :param sprint_id: An ID of a task
@@ -168,3 +169,28 @@ def get_tasks(sprint_id):
     return TaskSchema(many=True).jsonify(tasks)
 
 
+def get_task_employees(task_id):
+    employees = Employee.query.join(Task.employee).filter(Task.id == task_id).all()
+    return EmployeeSchema(many=True).jsonify(employees)
+
+
+def get_task_worklog(task_id):
+    worklog = Worklog.query.with_entities(Employee.id, Employee.first_name, Employee.last_name, Worklog.logged_hours,
+                                          Worklog.creation_time, Worklog.description, Worklog.work_date).filter(
+        Worklog.task_id == task_id, Worklog.employee_id == Employee.id).all()
+    return jsonify(worklog)
+
+
+def add_employee_task(employee_task, task):
+    statement = t_Employee_task.insert().values(employee_id=employee_task['employee_id'], task_id=task)
+    db.session.execute(statement)
+    return db.session.commit()
+
+
+def delete_employee_task(employee_task, task):
+    row = Task.query.filter(Task.id == task).first()
+    for i, x in enumerate(row.employee):
+        if x.id == employee_task['employee_id']:
+            del row.employee[i]
+            return db.session.commit()
+    return 'Employee or task doesnt exist'

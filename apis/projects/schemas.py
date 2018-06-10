@@ -23,3 +23,10 @@ class ProjectEmployeeRoleSchema(ma.ModelSchema):
 
     employee = fields.Nested(EmployeeSchema, only=('id', 'first_name', 'last_name'), dump_only=True)
     employee_role = fields.Nested(EmployeeRoleSchema, dump_only=True)
+
+
+class WorklogSchemaSimple(ma.ModelSchema):
+    class Meta:
+        model = Worklog
+
+    employee = fields.Nested(EmployeeSchema, only=('first_name', 'last_name'), dump_only=True)

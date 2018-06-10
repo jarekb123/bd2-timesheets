@@ -161,3 +161,44 @@ class SprintTask(Resource):
     def get(self, sprint_id, project_id):
         result = get_tasks(sprint_id)
         return result
+
+
+add_employee_model = api.model('AddEmployeeAPI', {
+    'employee_id': fields.Integer
+})
+
+
+@projects_api.route('/<int:project_id>/sprints/<int:sprint_id>/task/<int:task_id>/employees')
+class SprintTaskEmployees(Resource):
+    """Task employees"""
+
+    def get(self, project_id, sprint_id, task_id):
+        """Show task employees"""
+        task_employees = get_task_employees(task_id)
+        return task_employees
+
+    @api.expect(add_employee_model, validate=True)
+    def post(self, project_id, sprint_id, task_id):
+        """Add employee to task"""
+        status = add_employee_task(api.payload, task_id)
+        if status is None:
+            return 'Employee added', 200
+        return status
+
+    @api.expect(add_employee_model, validate=True)
+    def delete(self, project_id, sprint_id, task_id):
+        """Delete employee from task"""
+        status = delete_employee_task(api.payload, task_id)
+        if status is None:
+            return 'Employee deleted', 200
+        return status, 404
+
+
+@projects_api.route('/<int:project_id>/sprints/<int:sprint_id>/task/<int:task_id>/worklog')
+class SprintTaskWorklog(Resource):
+    """Task worklog"""
+
+    def get(self, project_id, sprint_id, task_id):
+        """Show task worklog"""
+        task_worklog = get_task_worklog(task_id)
+        return task_worklog
