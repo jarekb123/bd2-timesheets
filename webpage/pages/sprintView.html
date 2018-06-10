@@ -17,14 +17,21 @@
         <td>{{ task.id }}</td>
         <td>{{ task.stage }}</td>
         <td>
-            <button type="button" class="btn btn-primary" ng-click="taskViewButton(task.id)">Wiecej</button>
+            <button type="button" class="btn btn-primary" ng-click="taskViewButton(task)">Wiecej</button>
         </td>
     </tr>
     </tbody>
 </table>
 <div>
+    <div>Dodawanie zadania</div>
     <div>
-        <input type="text" class="form-control" ng-model="taskName" style="width:200px"/>
-        <button type="button" class="btn btn-primary" ng-click="addTask()">Dodaj Zadanie</button>
+        <input type="text" class="form-control" ng-model="taskDescription" placeholder="Opis"
+               style="width:200px; margin-bottom:5mm"/>
+        <select class="form-control" ng-model="taskStage"
+                ng-options="item as item.label for item in taskItems track by item.id"
+                style="width:200px; margin-bottom:5mm">
+        </select>
+        <button type="button" class="btn btn-primary" ng-click="addTask(taskDescription,taskStage)">Dodaj Zadanie
+        </button>
     </div>
 </div>
