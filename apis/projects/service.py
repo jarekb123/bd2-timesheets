@@ -140,12 +140,13 @@ def get_sprint_report(project_id, sprint_id):
         Worklog.employee_id).all()
 
     result = [[x, y, str(z)] for x, y, z in result]
-    result_json = jsonify(result)
     result_str = str(result)
     report = Report(sprint_id=sprint_id, description=result_str)
     db.session.add(report)
     db.session.commit()
-    return result_json
+
+    report = Report.query.filter(Report.sprint_id == sprint_id).first()
+    return ReportSchema().jsonify(report)
 
 
 def get_sprint(project_id, sprint_id):
