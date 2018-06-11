@@ -165,5 +165,7 @@ class Worklog(db.Model):
     creation_time = db.Column(db.DateTime, primary_key=True,
                               default=func.now())
 
+    task = db.relationship('Task')
+
     def __repr__(self):
         return '<Worklog %r, %r, %r>' % (self.employee_id, self.task_id, self.work_date)
