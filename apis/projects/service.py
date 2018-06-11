@@ -1,7 +1,7 @@
 from my_app import db
 from database.models import Worklog
 from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole, ProjectEmployeeRoleSchema, Sprint, \
-    SprintSchema, Task, Worklog, Employee, TaskSchema, EmployeeSchema, WorklogSchemaSimple
+    SprintSchema, Task, Worklog, Employee, TaskSchema, EmployeeSchema, WorklogSchemaSimple, ReportSchema
 from database.models import Report, EmployeeRole, t_Employee_task
 from sqlalchemy import func
 from flask import jsonify
@@ -128,6 +128,10 @@ def get_sprint_report(project_id, sprint_id):
     """Get report for sprint
     :param sprint_id: A ID of sprint
     :return Sprint report"""
+
+    result = Report.query.filter(Report.sprint_id == sprint_id).first()
+    if result:
+        return ReportSchema().jsonify(result)
 
     result = Task.query.with_entities(Employee.first_name, Employee.last_name, func.sum(Worklog.logged_hours)).filter(
         Task.sprint_id == sprint_id,

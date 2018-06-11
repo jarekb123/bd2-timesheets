@@ -1,6 +1,6 @@
 from my_app import ma
 from database.models import Project, ProjectEmployeeRole, Sprint, Task, Worklog, Employee
-from database.schemas import EmployeeSchema, EmployeeRoleSchema, TaskSchema, WorklogSchema
+from database.schemas import EmployeeSchema, EmployeeRoleSchema, TaskSchema, WorklogSchema, ReportSchema
 
 from marshmallow import fields
 import simplejson
