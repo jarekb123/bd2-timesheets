@@ -81,6 +81,7 @@ def generate_employee_summary(employee_id, year, month):
                                                          ProjectEmployeeRole.employee_id == employee_id).first()
         if project_id and employee_role:
             salary = salary + employee_role.rate * worklog.logged_hours
+    rows_deleted = Summarize.query.filter(Summarize.employee_id == employee_id, Summarize.month == month, Summarize.year == year).delete()
     summary = Summarize(employee_id, month, year, float(salary))
     try:
         db.session.add(summary)
