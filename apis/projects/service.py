@@ -5,7 +5,7 @@ from apis.projects.schemas import Project, ProjectSchema, ProjectEmployeeRole, P
 from database.models import Report, EmployeeRole, t_Employee_task
 from sqlalchemy import func
 from flask import jsonify
-
+from ast import literal_eval
 
 def get_all_projects():
     """
@@ -129,9 +129,11 @@ def get_sprint_report(project_id, sprint_id):
     :param sprint_id: A ID of sprint
     :return Sprint report"""
 
-    result = Report.query.filter(Report.sprint_id == sprint_id).first()
+    result = Report.query.with_entities(Report.description).filter(Report.sprint_id == sprint_id).first()
+
     if result:
-        return ReportSchema().jsonify(result)
+        result = literal_eval(result[0])
+        return jsonify(result)
 
     result = Task.query.with_entities(Employee.first_name, Employee.last_name, func.sum(Worklog.logged_hours)).filter(
         Task.sprint_id == sprint_id,
@@ -146,7 +148,7 @@ def get_sprint_report(project_id, sprint_id):
     db.session.commit()
 
     report = Report.query.filter(Report.sprint_id == sprint_id).first()
-    return ReportSchema().jsonify(report)
+    return jsonify(result)
 
 
 def get_sprint(project_id, sprint_id):
